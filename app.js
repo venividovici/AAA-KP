@@ -29,7 +29,6 @@ app.get('/output', function (req, res) {
         res.sendFile(__dirname + '/output.html');
 });
 
-
 app.get('/openai', async function (req, res) {
         const configuration = new Configuration({
                 apiKey: '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',
@@ -50,8 +49,6 @@ app.get('/openai', async function (req, res) {
 
         res.redirect('/')
 })
-
-
 
 var fnAuthCode;
 var fnAccessToken;
@@ -118,8 +115,6 @@ app.get('/fn-info', function (req, res) {
         res.redirect('/');
 });
 
-
-
 var hsAuthCode;
 var hsAccessToken;
 
@@ -159,7 +154,6 @@ app.get('/hs-callback', function (req, res) {
         res.redirect('/');
 })
 
-
 //hubspot OAuth
 app.get('/hs-oauth', function (req, res) {
         //build the authurl
@@ -195,18 +189,6 @@ app.get('/hs-info', function (req, res) {
         })
         res.redirect('/');
 });
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Start server on port 3000
 app.listen(3000, function (req, res) {
