@@ -7,6 +7,12 @@ const app = express();
 const fs = require("fs");
 app.use("/images", express.static("images"));
 
+//Import of scripts
+const fortnox = require("./scripts/fortnox");
+
+//Set engine
+app.set('view engine', 'ejs');
+
 /**
  * app.get defines the behaviour of the server when
  * a certain url is being called. ('/' is root = localhost:3000 in our case)
@@ -17,8 +23,16 @@ app.use("/images", express.static("images"));
 
 //landing page
 app.get("/", function (req, res) {
-  res.sendFile(__dirname + "/pages/welcome.html");
+  res.render("pages/welcome", {
+  });
 });
+
+//test users
+const user = {
+  firstName: 'Frida',
+}
+
+var isTrue = false;
 
 //welcome page
 app.get("/welcome", function (req, res) {
@@ -34,12 +48,14 @@ app.get("/authenticate", function (req, res) {
                 // User is not authenticated, disable the button
                 res.render('/authenticate', { enableButton: false });
         }*/
-  res.sendFile(__dirname + "/pages/authenticate.html");
+        res.render("pages/authenticate", {
+        });
 });
 
 //output page
 app.get("/output", function (req, res) {
-  res.sendFile(__dirname + "/pages/output.html");
+  res.render("pages/output", {
+  });
 });
 
 app.get("/openai", async function (req, res) {
