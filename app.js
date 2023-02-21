@@ -63,6 +63,11 @@ app.get("/openai", async function (req, res) {
   res.redirect("/");
 });
 
+//404 page (HAS TO BE THE LAST @app.get ROUTE IN THIS DOCUMENT)
+app.get("/*", function (req, res) {
+  res.redirect("/");
+});
+
 var fnAuthCode;
 var fnAccessToken;
 
