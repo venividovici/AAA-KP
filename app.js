@@ -11,7 +11,7 @@ app.use("/images", express.static("images"));
 const fortnox = require("./scripts/fortnox");
 
 //Set engine
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
 
 /**
  * app.get defines the behaviour of the server when
@@ -23,14 +23,13 @@ app.set('view engine', 'ejs');
 
 //landing page
 app.get("/", function (req, res) {
-  res.render("pages/welcome", {
-  });
+  res.render("pages/welcome", {});
 });
 
 //test users
 const user = {
-  firstName: 'Frida',
-}
+  firstName: "Frida",
+};
 
 var isTrue = false;
 
@@ -41,21 +40,52 @@ app.get("/welcome", function (req, res) {
 
 //authenticate page
 app.get("/authenticate", function (req, res) {
-  /* if (hsAuthCode!=="") {
-                // User is authenticated, enable the button
-                res.render('/authenticate', { enableButton: true });
-        } else {
-                // User is not authenticated, disable the button
-                res.render('/authenticate', { enableButton: false });
-        }*/
-        res.render("pages/authenticate", {
-        });
+  res.render("pages/authenticate", {
+    isHsEnabled: !hsAuthCode,
+    isFnEnabled: !fnAuthCode,
+  });
 });
 
 //output page
+var dataInfo = "";
+
 app.get("/output", function (req, res) {
-  res.render("pages/output", {
+  const option1 = {
+    method: "GET",
+    url: "https://api.hubspot.com/crm/v3/objects/contacts",
+    headers: {
+      Authorization: "Bearer " + hsAccessToken,
+      "Content-Type": "application/json",
+    },
+  };
+  request(option1, (error, response, body) => {
+    if (error) {
+      console.error(error);
+    } else {
+      //TODO handle hubspot information
+      console.log(body);
+      //dataInfo = JSON.stringify(body);
+    }
   });
+  const option2 = {
+    method: "GET",
+    url: "https://api.fortnox.se/3/companyinformation",
+    headers: {
+      Authorization: "Bearer " + fnAccessToken,
+    },
+  };
+
+  request(option2, (error, response, body) => {
+    if (error) {
+      console.error(error);
+    } else {
+      //TODO handle fortnox information
+      console.log(body);
+      dataInfo += JSON.stringify(body);
+    }
+  });
+
+  res.render("pages/output", { dataInfo: dataInfo });
 });
 
 app.get("/openai", async function (req, res) {
@@ -79,10 +109,10 @@ app.get("/openai", async function (req, res) {
   res.redirect("/");
 });
 
-//404 page (HAS TO BE THE LAST @app.get ROUTE IN THIS DOCUMENT)
+/* //404 page (HAS TO BE THE LAST @app.get ROUTE IN THIS DOCUMENT)
 app.get("/*", function (req, res) {
   res.redirect("/");
-});
+}); */
 
 var fnAuthCode;
 var fnAccessToken;
@@ -163,8 +193,6 @@ app.get("/hs-callback", function (req, res) {
         console.log(body);
         const responseBody = JSON.parse(body);
         hsAccessToken = responseBody.access_token;
-        /* var hubSpotButton = document.getElementById('HubSpotButton'); //Funkar detta??
-                                HubSpotButton.disabled = true;*/
       }
     });
   }
@@ -207,7 +235,7 @@ app.get('/fn-info', function (req, res) {
 });*/
 
 //info from hubspot and fortnox
-app.get("/info", function (req, res) {
+/* app.get("/info", function (req, res) {
   const option1 = {
     method: "GET",
     url: "https://api.hubspot.com/crm/v3/objects/contacts",
@@ -241,7 +269,7 @@ app.get("/info", function (req, res) {
     }
   });
   res.redirect("/output");
-});
+}); */
 
 // Start server on port 3000
 app.listen(3000, function (req, res) {

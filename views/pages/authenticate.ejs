@@ -20,12 +20,9 @@
 
 	<main>
 		<p>Här kommer det att stå "Logga in" eller något.</p>
-		<button onclick="location.href='/fn-oauth' " type="button" id="fortnoxButton">Fortnox</button>
-		<button onclick="location.href='/hs-oauth' " type="button" id="HubSpotButton">HubSpot</button>
-        <button onclick="location.href='/output' " type="button" id="output">Nästa</button>
-        <form action="/info" method="GET">
-        <button type="submit">Get Info</button>
-        </form>
+		<button onclick="location.href='/fn-oauth' " type="button" id="fortnoxButton" <%= isFnEnabled ? '' : 'disabled' %>>Fortnox</button>
+		<button onclick="location.href='/hs-oauth' " type="button" id="HubSpotButton" <%= isHsEnabled ? '' : 'disabled' %>>HubSpot</button>
+        <button onclick="location.href='/output' " type="button" id="output" <%= (isFnEnabled || isHsEnabled) ? 'disabled' : '' %>>Nästa</button>
 	</main>
 
 	<footer>
