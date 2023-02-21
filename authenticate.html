@@ -14,15 +14,18 @@
 <body>
 
 	<header>
-		<img src="logga.png" alt="AAA företagslogga" width="500" height="600">
+		<img src="logga.png" alt="AAA företagslogga" width="500px">
 		<h1>Autentisera dig</h1>
 	</header>
 
 	<main>
 		<p>Här kommer det att stå "Logga in" eller något.</p>
-		<button onclick="location.href='/fn-oauth' " type="button">Fortnox</button>
-		<button onclick="location.href='/hs-oauth' " type="button">HubSpot</button>
-        <button onclick="location.href='/output' " type="button">Nästa</button>
+		<button onclick="location.href='/fn-oauth' " type="button" id="fortnoxButton">Fortnox</button>
+		<button onclick="location.href='/hs-oauth' " type="button" id="HubSpotButton">HubSpot</button>
+        <button onclick="location.href='/output' " type="button" id="output">Nästa</button>
+        <form action="/info" method="GET">
+        <button type="submit">Get Info</button>
+        </form>
 	</main>
 
 	<footer>

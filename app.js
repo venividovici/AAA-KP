@@ -21,6 +21,13 @@ app.get('/', function (req, res) {
 
 //authenticate page
 app.get('/authenticate', function (req, res) {
+       /* if (hsAuthCode!=="") {
+                // User is authenticated, enable the button
+                res.render('/authenticate', { enableButton: true });
+        } else {
+                // User is not authenticated, disable the button
+                res.render('/authenticate', { enableButton: false });
+        }*/
         res.sendFile(__dirname + '/authenticate.html');
 });
 
@@ -81,38 +88,19 @@ app.get('/fn-callback', function (req, res) {
                                 console.log(body);
                                 const responseBody = JSON.parse(body);
                                 fnAccessToken = responseBody.access_token;
+                               /* var fortnoxButton = document.getElementById('fortnoxButton'); //Funkar detta??
+                                fortnoxButton.disabled = true;*/
                         }
                 })
 
         }
-        res.redirect('/');
+        res.redirect('/authenticate');
 })
 
 //fortnox OAuth
 app.get('/fn-oauth', function (req, res) {
         //return to landing page after auth
         res.redirect('https://apps.fortnox.se/oauth-v1/auth?client_id=22Fp35NiBGUD&redirect_uri=http://localhost:3000/fn-callback&scope=companyinformation&state=somestate&access_type=offline&response_type=code&account_type=service');
-});
-
-//fortnox info
-app.get('/fn-info', function (req, res) {
-        const options = {
-                method: 'GET',
-                url: 'https://api.fortnox.se/3/companyinformation',
-                headers: {
-                        'Authorization': "Bearer " + fnAccessToken
-                }
-        }
-
-        request(options, (error, response, body) => {
-                if (error) {
-                        console.error(error)
-                } else {
-                        //TODO handle fortnox information
-                        console.log(body);
-                }
-        })
-        res.redirect('/');
 });
 
 var hsAuthCode;
@@ -147,11 +135,13 @@ app.get('/hs-callback', function (req, res) {
                                 console.log(body);
                                 const responseBody = JSON.parse(body);
                                 hsAccessToken = responseBody.access_token;
+                               /* var hubSpotButton = document.getElementById('HubSpotButton'); //Funkar detta??
+                                HubSpotButton.disabled = true;*/
                         }
                 })
 
         }
-        res.redirect('/');
+        res.redirect('/authenticate');
 })
 
 //hubspot OAuth
@@ -168,14 +158,13 @@ app.get('/hs-oauth', function (req, res) {
         res.redirect(authUrl);
 });
 
-//hubspot info
-app.get('/hs-info', function (req, res) {
+/*
+app.get('/fn-info', function (req, res) {
         const options = {
                 method: 'GET',
-                url: 'https://api.hubspot.com/crm/v3/objects/contacts',
+                url: 'https://api.fortnox.se/3/companyinformation',
                 headers: {
-                        'Authorization': "Bearer " + hsAccessToken,
-                        'Content-Type': 'application/json'
+                        'Authorization': "Bearer " + fnAccessToken
                 }
         }
 
@@ -183,11 +172,48 @@ app.get('/hs-info', function (req, res) {
                 if (error) {
                         console.error(error)
                 } else {
-                        //TODO handle hubspot information
+                        //TODO handle fortnox information
                         console.log(body);
                 }
         })
         res.redirect('/');
+});*/
+
+//info from hubspot and fortnox
+app.get('/info', function (req, res) {
+        const option1 = {
+                method: 'GET',
+                url: 'https://api.hubspot.com/crm/v3/objects/contacts',
+                headers: {
+                        'Authorization': "Bearer " + hsAccessToken,
+                        'Content-Type': 'application/json'
+                }
+        }
+        request(option1, (error, response, body) => {
+                if (error) {
+                        console.error(error)
+                } else {
+                        //TODO handle hubspot information
+                        console.log(body);
+                }
+        })
+        const option2 = {
+                method: 'GET',
+                url: 'https://api.fortnox.se/3/companyinformation',
+                headers: {
+                        'Authorization': "Bearer " + fnAccessToken
+                }
+        }
+
+        request(option2, (error, response, body) => {
+                if (error) {
+                        console.error(error)
+                } else {
+                        //TODO handle fortnox information
+                        console.log(body);
+                }
+        })
+        res.redirect('/output');
 });
 
 // Start server on port 3000
