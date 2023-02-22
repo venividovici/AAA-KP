@@ -1,39 +1,31 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 
 <html>
-
-<head>
+  <head>
     <title>Automated Analytics Accelerator</title>
-    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-    <meta charset="UTF-8">
-    <meta name="description" content="AAA - Kunskapspartner">
-    <meta name="keywords" content="API, AI, BI">
-    <meta name="author" content="Kunskapspartner">
-</head>
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    <meta charset="UTF-8" />
+    <meta name="description" content="AAA - Kunskapspartner" />
+    <meta name="keywords" content="API, AI, BI" />
+    <meta name="author" content="Kunskapspartner" />
+  </head>
 
-<body>
-
+  <body>
     <header>
-        <img src="images/logga.png" alt="AAA företagslogga">
-        <h1>Output</h1>
+      <img src="images/logga.png" alt="AAA företagslogga" />
+      <h1>Output</h1>
     </header>
 
-    <main> 
-        <div id="<%= isLoading ? 'isLoading' : 'outputContent' %>">
-          <% if (isLoading) { %>
-            Loading...
-          <% } else { %>
-            <p>Här har du AI genererad data.</p>
-            <textarea readonly><%= dataInfo %></textarea>
-            <button onclick="location.href='/'" type="button">Tillbaka till startsidan</button>
-          <% } %>
-        </div>
-      </main>
+    <main>
+      <div>
+        <p>Här har du AI genererad data.</p>
+        <textarea readonly><%= dataInfo %></textarea>
+        <button onclick="location.href='/'" type="button">
+          Tillbaka till startsidan
+        </button>
+      </div>
+    </main>
 
-    <footer>
-
-    </footer>
-
-</body>
-
+    <footer></footer>
+  </body>
 </html>

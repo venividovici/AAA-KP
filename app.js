@@ -6,39 +6,19 @@ const request = require("request");
 const app = express();
 const fs = require("fs");
 app.use("/images", express.static("images"));
-
-//Import of scripts
-const fortnox = require("./scripts/fortnox");
-
-//Set engine
 app.set("view engine", "ejs");
 
-/**
- * app.get defines the behaviour of the server when
- * a certain url is being called. ('/' is root = localhost:3000 in our case)
- *
- * sendFile serves HTML pages to the user.
- * res.redirect sends the user to a new url.
- */
-
-//landing page
+//Landing page
 app.get("/", function (req, res) {
   res.render("pages/welcome", {});
 });
 
-//test users
-const user = {
-  firstName: "Frida",
-};
-
-var isTrue = false;
-
-//welcome page
+//Welcome page
 app.get("/welcome", function (req, res) {
   res.redirect("/");
 });
 
-//authenticate page
+//Authenticate page
 app.get("/authenticate", function (req, res) {
   res.render("pages/authenticate", {
     isHsEnabled: !hsAuthCode,
@@ -46,15 +26,15 @@ app.get("/authenticate", function (req, res) {
   });
 });
 
-//output page
+//Output page
 app.get("/output", function (req, res) {
   res.render("pages/output", {
-    dataInfo: JSON.stringify(hsResponse + fnResponse),
+    dataInfo: JSON.stringify(hsResponse + fnResponse + openAItext),
     isLoading: false,
   });
 });
 
-//loading page
+//Loading function
 var hsResponse = "";
 var fnResponse = "";
 
@@ -75,7 +55,11 @@ app.get("/loading", function (req, res) {
     },
   };
 
-  Promise.all([requestPromise(hubspot), requestPromise(fortnox)])
+  Promise.all([
+    requestPromise(hubspot),
+    requestPromise(fortnox),
+    requestOpenAI(),
+  ])
     .then((responses) => {
       hsResponse = responses[0];
       fnResponse = responses[1];
@@ -87,6 +71,27 @@ app.get("/loading", function (req, res) {
       res.status(500).send("Error");
     });
 });
+
+// Promise for OpenAI
+var openAItext = "";
+async function requestOpenAI() {
+  const configuration = new Configuration({
+    apiKey: "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",
+  });
+
+  const openai = new OpenAIApi(configuration);
+  try {
+    const completion = await openai.createCompletion({
+      model: "text-davinci-003",
+      prompt: "Write a haiku about insomnia.",
+    });
+    console.log(completion.data.choices[0].text);
+    openAItext = completion.data.choices[0].text;
+  } catch (error) {
+    console.log(error.response.status);
+    console.log(error.response.data);
+  }
+}
 
 // Wrap the request function in a promise for easier use with Promise.all
 function requestPromise(options) {
@@ -101,71 +106,6 @@ function requestPromise(options) {
   });
 }
 
-/*app.get("/output", function (req, res) {
-    const option1 = {
-      method: "GET",
-      url: "https://api.hubspot.com/crm/v3/objects/contacts",
-      headers: {
-        Authorization: "Bearer " + hsAccessToken,
-        "Content-Type": "application/json",
-      },
-    };
-    request(option1, (error, response, body) => {
-      if (error) {
-        console.error(error);
-      } else {
-        //TODO handle hubspot information
-        console.log(body);
-        dataInfo = JSON.stringify(body);
-        isLoading=false; 
-        res.render("pages/output", { dataInfo: dataInfo, isLoading: isLoading });
-      
-      }
-    });
-    const option2 = {
-      method: "GET",
-      url: "https://api.fortnox.se/3/companyinformation",
-      headers: {
-        Authorization: "Bearer " + fnAccessToken,
-      },
-    };
-  
-    request(option2, (error, response, body) => {
-      if (error) {
-        console.error(error);
-      } else {
-        //TODO handle fortnox information
-        console.log(body);
-        dataInfo += JSON.stringify(body);
-        isLoading=false; 
-        res.render("pages/output", { dataInfo: dataInfo, isLoading: isLoading });
-      }
-    });
-  
-   // res.render("pages/output", { dataInfo: dataInfo, isLoading: isLoading });
-  }); */
-
-app.get("/openai", async function (req, res) {
-  const configuration = new Configuration({
-    apiKey: "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",
-  });
-
-  const openai = new OpenAIApi(configuration);
-  try {
-    const completion = await openai.createCompletion({
-      model: "text-davinci-003",
-      prompt: "Write a haiku about insomnia.",
-    });
-
-    console.log(completion.data.choices[0].text);
-  } catch (error) {
-    console.log(error.response.status);
-    console.log(error.response.data);
-  }
-
-  res.redirect("/");
-});
-
 /* //404 page (HAS TO BE THE LAST @app.get ROUTE IN THIS DOCUMENT)
   app.get("/*", function (req, res) {
     res.redirect("/");
@@ -174,8 +114,7 @@ app.get("/openai", async function (req, res) {
 var fnAuthCode;
 var fnAccessToken;
 
-//fortnox callback
-//(exchange code for token)
+//Fortnox callback (exchange code for token)
 app.get("/fn-callback", function (req, res) {
   const { pathname, query } = url.parse(req.url);
   const queryParams = querystring.parse(query);
@@ -202,17 +141,13 @@ app.get("/fn-callback", function (req, res) {
         console.log(body);
         const responseBody = JSON.parse(body);
         fnAccessToken = responseBody.access_token;
-        /* var fortnoxButton = document.getElementById('fortnoxButton'); //Funkar detta??
-                                  fortnoxButton.disabled = true;*/
       }
     });
   }
   res.redirect("/authenticate");
 });
 
-//fortnox OAuth
 app.get("/fn-oauth", function (req, res) {
-  //return to landing page after auth
   res.redirect(
     "https://apps.fortnox.se/oauth-v1/auth?client_id=22Fp35NiBGUD&redirect_uri=http://localhost:3000/fn-callback&scope=companyinformation&state=somestate&access_type=offline&response_type=code&account_type=service"
   );
@@ -221,8 +156,7 @@ app.get("/fn-oauth", function (req, res) {
 var hsAuthCode;
 var hsAccessToken;
 
-//hubspot callback
-//(exchange code for token)
+//Hubspot callback (exchange code for token)
 app.get("/hs-callback", function (req, res) {
   const { pathname, query } = url.parse(req.url);
   const queryParams = querystring.parse(query);
@@ -256,9 +190,8 @@ app.get("/hs-callback", function (req, res) {
   res.redirect("/authenticate");
 });
 
-//hubspot OAuth
+//Hubspot OAuth
 app.get("/hs-oauth", function (req, res) {
-  //build the authurl
   const authUrl =
     "https://app.hubspot.com/oauth/authorize" +
     `?client_id=afd563db-c00e-4d47-b52d-d421800d6c01` +
@@ -266,67 +199,8 @@ app.get("/hs-oauth", function (req, res) {
     `&redirect_uri=http://localhost:3000/hs-callback`;
   +`&state=hubspot`;
 
-  // Redirect the user
   res.redirect(authUrl);
 });
-
-/*
-  app.get('/fn-info', function (req, res) {
-          const options = {
-                  method: 'GET',
-                  url: 'https://api.fortnox.se/3/companyinformation',
-                  headers: {
-                          'Authorization': "Bearer " + fnAccessToken
-                  }
-          }
-  
-          request(options, (error, response, body) => {
-                  if (error) {
-                          console.error(error)
-                  } else {
-                          //TODO handle fortnox information
-                          console.log(body);
-                  }
-          })
-          res.redirect('/');
-  });*/
-
-//info from hubspot and fortnox
-/* app.get("/info", function (req, res) {
-    const option1 = {
-      method: "GET",
-      url: "https://api.hubspot.com/crm/v3/objects/contacts",
-      headers: {
-        Authorization: "Bearer " + hsAccessToken,
-        "Content-Type": "application/json",
-      },
-    };
-    request(option1, (error, response, body) => {
-      if (error) {
-        console.error(error);
-      } else {
-        //TODO handle hubspot information
-        console.log(body);
-      }
-    });
-    const option2 = {
-      method: "GET",
-      url: "https://api.fortnox.se/3/companyinformation",
-      headers: {
-        Authorization: "Bearer " + fnAccessToken,
-      },
-    };
-  
-    request(option2, (error, response, body) => {
-      if (error) {
-        console.error(error);
-      } else {
-        //TODO handle fortnox information
-        console.log(body);
-      }
-    });
-    res.redirect("/output");
-  }); */
 
 // Start server on port 3000
 app.listen(3000, function (req, res) {
