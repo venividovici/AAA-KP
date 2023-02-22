@@ -18,11 +18,17 @@
         <h1>Output</h1>
     </header>
 
-    <main>
-        <p>Här har du AI genererad data.</p>
-        <textarea readonly><%= dataInfo %></textarea>
-        <button onclick="location.href='/'" type="button">Tillbaka till startsidan</button>
-    </main>
+    <main> 
+        <div id="<%= isLoading ? 'isLoading' : 'outputContent' %>">
+          <% if (isLoading) { %>
+            Loading...
+          <% } else { %>
+            <p>Här har du AI genererad data.</p>
+            <textarea readonly><%= dataInfo %></textarea>
+            <button onclick="location.href='/'" type="button">Tillbaka till startsidan</button>
+          <% } %>
+        </div>
+      </main>
 
     <footer>
 
