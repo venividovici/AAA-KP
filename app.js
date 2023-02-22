@@ -47,10 +47,18 @@ app.get("/authenticate", function (req, res) {
 });
 
 //output page
+app.get("/output", function (req, res) {
+  res.render("pages/output", {
+    dataInfo: JSON.stringify(hsResponse + fnResponse),
+    isLoading: false,
+  });
+});
+
+//loading page
 var hsResponse = "";
 var fnResponse = "";
 
-app.get("/output", function (req, res) {
+app.get("/loading", function (req, res) {
   const hubspot = {
     method: "GET",
     url: "https://api.hubspot.com/crm/v3/objects/contacts",
@@ -72,10 +80,7 @@ app.get("/output", function (req, res) {
       hsResponse = responses[0];
       fnResponse = responses[1];
 
-      res.render("pages/output", {
-        isLoading: false,
-        dataInfo: JSON.stringify(fnResponse + hsResponse),
-      });
+      res.redirect("/output");
     })
     .catch((error) => {
       console.error(error);
