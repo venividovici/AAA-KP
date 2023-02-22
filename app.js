@@ -29,8 +29,7 @@ app.get("/authenticate", function (req, res) {
 //Output page
 app.get("/output", function (req, res) {
   res.render("pages/output", {
-    dataInfo: JSON.stringify(openAItext),
-    isLoading: false,
+    dataInfo: openAItext,
   });
 });
 
