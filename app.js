@@ -29,7 +29,7 @@ app.get("/authenticate", function (req, res) {
 //Output page
 app.get("/output", function (req, res) {
   res.render("pages/output", {
-    dataInfo: JSON.stringify(hsResponse + fnResponse + openAItext),
+    dataInfo: JSON.stringify(openAItext),
     isLoading: false,
   });
 });
@@ -74,6 +74,7 @@ app.get("/loading", function (req, res) {
 
 // Promise for OpenAI
 var openAItext = "";
+
 async function requestOpenAI() {
   const configuration = new Configuration({
     apiKey: "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",
@@ -83,13 +84,13 @@ async function requestOpenAI() {
   try {
     const completion = await openai.createCompletion({
       model: "text-davinci-003",
-      prompt: "Write a haiku about insomnia.",
+      max_tokens: 1500,
+      prompt: `Analysera denna data. Data: ${hsResponse + fnResponse}`,
     });
     console.log(completion.data.choices[0].text);
     openAItext = completion.data.choices[0].text;
   } catch (error) {
-    console.log(error.response.status);
-    console.log(error.response.data);
+    console.log(error.response);
   }
 }
 
