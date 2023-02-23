@@ -9,7 +9,7 @@
 	<meta name="description" content="AAA - Kunskapspartner">
 	<meta name="keywords" content="API, AI, BI">
 	<meta name="author" content="Kunskapspartner">
-	<script type="text/javascript" src=""></script>
+	<script type="text/javascript" src="/scripts/scripts.js"></script>
 </head>
 
 <body>
@@ -23,8 +23,7 @@
 		<p>Här kommer det att stå "Logga in" eller något.</p>
 		<button onclick="location.href='/fn-oauth' " type="button" id="fortnoxButton" <%= isFnEnabled ? '' : 'disabled' %>>Fortnox</button>
 		<button onclick="location.href='/hs-oauth' " type="button" id="HubSpotButton" <%= isHsEnabled ? '' : 'disabled' %>>HubSpot</button>
-        <button onclick="location.href='/loading' " type="button" id="output" <%= (isFnEnabled || isHsEnabled) ? 'disabled' : '' %>>Nästa</button>
-		<button onclick="onClickToOutput()" type="button" id="output">TEST</button>
+        <button onclick="onClickToOutput()" type="button" id="output" <%= (isFnEnabled || isHsEnabled) ? 'disabled' : '' %>>Nästa</button>
 		<p id="loadingText"></p>
 	</main>
 
