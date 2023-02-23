@@ -5,8 +5,9 @@ const url = require("url");
 const request = require("request");
 const app = express();
 const fs = require("fs");
-//app.use("scripts.js", express.static("scripts.js"));
 app.use("/images", express.static("images"));
+app.use("/scripts", express.static("scripts"));
+app.use("/files", express.static("files"));
 app.set("view engine", "ejs");
 
 //Landing page
