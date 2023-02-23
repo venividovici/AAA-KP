@@ -3,8 +3,8 @@ function onClickToOutput() {
   location.href = "/loading";
 }
 function downloadFile(){
-  var content = 'fnResponse'; 
-  var blob = new Blob([content], {type: "text/csv"});
+  var content = ['hej; tjo; hejsan; tjena'];
+  var blob = new Blob(content, {type: "text/csv"});
   var fileLink = document.createElement('a');
   fileLink.href = window.URL.createObjectURL(blob);
   const date = new Date(); 
