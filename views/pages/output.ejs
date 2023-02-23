@@ -9,6 +9,7 @@
     <meta name="description" content="AAA - Kunskapspartner" />
     <meta name="keywords" content="API, AI, BI" />
     <meta name="author" content="Kunskapspartner" />
+    <script type="text/javascript" src="/scripts/scripts.js"></script>
   </head>
 
   <body>
@@ -30,11 +31,8 @@
           Här står text som förklarar att man med ett knapptryck kan ladda ner
           all data till höger:
         </p>
-        <button>
-          <a role="button" href="/files/file.txt" download="Hej.txt"
-            >Ladda ner</a
-          >
-        </button>
+        <button type="submit" onclick="downloadFile()">Ladda ner</button>
+
       </div>
     </main>
 
