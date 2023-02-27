@@ -19,6 +19,10 @@ async function requestOpenAI(iterableData) {
                 chunk of unsummarized data. Summarize the databatch and integrate 
                 it into the summarized data provided. If no summarized data is
                 provided, then simply summarize the databatch for itself.
+                Do not lose any data! All the data in the summarized data section
+                must be preserved, the purpose is to create a complete overview
+                of a large quantity of data. Your task is to summarize the provided
+                databatch, append and integrate it into the summarized data provided.
                 
                 \n\nSummarized Data:${summarizedData}\n\n
                 Databatch:${iterableData[i]}`,
