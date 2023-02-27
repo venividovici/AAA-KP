@@ -4,13 +4,12 @@ async function requestOpenAI(iterableData) {
   const configuration = new Configuration({
     apiKey: "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",
   });
-  var i,
-    generations = 10;
+  var generations = iterableData.length;
   const openai = new OpenAIApi(configuration);
   try {
     var summarizedData = "";
     console.log("\n\n\n");
-    for (i = 0; i < generations; i++) {
+    for (var i = 0; i < generations; i++) {
       console.log(`step ${i} in progress...\n\n`);
       const completion = await openai.createCompletion({
         model: "text-davinci-003",
