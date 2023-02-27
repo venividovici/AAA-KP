@@ -61,16 +61,18 @@ app.get("/loading", function (req, res) {
   Promise.all([
     requestPromise(hubspot),
     requestPromise(fortnox),
-    requestOpenAI(["abc,abc,abc,abc,abc",
-                  "def,def,def,def,def",
-                  "ghi,ghi,ghi,ghi,ghi",
-                  "jkl,jkl,jkl,jkl,jkl",
-                  "mno,mno,mno,mno,mno",
-                  "pqr,pqr,pqr,pqr,pqr",
-                  "stu,stu,stu,stu,stu",
-                  "vwx,vwx,vwx,vwx,vwx",
-                  "yz!,yz!,yz!,yz!,yz!",
-                  "000,000,000,000,000"]),
+    requestOpenAI([
+      "abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc",
+      "def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def",
+      "ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi",
+      "jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl",
+      "mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno",
+      "pqr,pqr,pqr,pqr,pqr,pqr,pqr,pqr,pqr,pqr,pqr,pqr,pqr,pqr,pqr,pqr,pqr,pqr,pqr,pqr,pqr",
+      "stu,stu,stu,stu,stu,stu,stu,stu,stu,stu,stu,stu,stu,stu,stu,stu,stu,stu,stu,stu,stu",
+      "vwx,vwx,vwx,vwx,vwx,vwx,vwx,vwx,vwx,vwx,vwx,vwx,vwx,vwx,vwx,vwx,vwx,vwx,vwx,vwx,vwx",
+      "yz!,yz!,yz!,yz!,yz!,yz!,yz!,yz!,yz!,yz!,yz!,yz!,yz!,yz!,yz!,yz!,yz!,yz!,yz!,yz!,yz!",
+      "000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000",
+    ]),
   ])
     .then((responses) => {
       hsResponse = responses[0];
