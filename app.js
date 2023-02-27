@@ -1,10 +1,12 @@
-const { Configuration, OpenAIApi } = require("openai");
+//const { Configuration, OpenAIApi } = require("openai");
 const express = require("express");
 const querystring = require("querystring");
 const url = require("url");
 const request = require("request");
 const app = express();
 const fs = require("fs");
+const requestOpenAI = require("./ai.js");
+
 app.use("/images", express.static("images"));
 app.use("/scripts", express.static("scripts"));
 app.use("/files", express.static("files"));
@@ -59,7 +61,16 @@ app.get("/loading", function (req, res) {
   Promise.all([
     requestPromise(hubspot),
     requestPromise(fortnox),
-    requestOpenAI(),
+    requestOpenAI(["abc,abc,abc,abc,abc",
+                  "def,def,def,def,def",
+                  "ghi,ghi,ghi,ghi,ghi",
+                  "jkl,jkl,jkl,jkl,jkl",
+                  "mno,mno,mno,mno,mno",
+                  "pqr,pqr,pqr,pqr,pqr",
+                  "stu,stu,stu,stu,stu",
+                  "vwx,vwx,vwx,vwx,vwx",
+                  "yz!,yz!,yz!,yz!,yz!",
+                  "000,000,000,000,000"]),
   ])
     .then((responses) => {
       hsResponse = responses[0];
@@ -75,25 +86,6 @@ app.get("/loading", function (req, res) {
 
 // Promise for OpenAI
 var openAItext = "";
-
-async function requestOpenAI() {
-  const configuration = new Configuration({
-    apiKey: "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",
-  });
-
-  const openai = new OpenAIApi(configuration);
-  try {
-    const completion = await openai.createCompletion({
-      model: "text-davinci-003",
-      max_tokens: 1500,
-      prompt: `Analysera denna data. Data: ${hsResponse + fnResponse}`,
-    });
-    console.log(completion.data.choices[0].text);
-    openAItext = completion.data.choices[0].text;
-  } catch (error) {
-    console.log(error.response);
-  }
-}
 
 // Wrap the request function in a promise for easier use with Promise.all
 function requestPromise(options) {
