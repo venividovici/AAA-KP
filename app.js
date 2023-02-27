@@ -64,6 +64,8 @@ app.get("/loading", function (req, res) {
     .then((responses) => {
       hsResponse = responses[0];
       fnResponse = responses[1];
+      console.log("--------------------------------------------------------"); 
+      console.log(hsResponse, fnResponse); 
 
       res.redirect("/output");
     })
@@ -195,11 +197,15 @@ app.get("/hs-callback", function (req, res) {
 //Hubspot OAuth
 app.get("/hs-oauth", function (req, res) {
   const authUrl =
-    "https://app.hubspot.com/oauth/authorize" +
+  "https://app-eu1.hubspot.com/oauth/authorize" + 
+  "?client_id=afd563db-c00e-4d47-b52d-d421800d6c01" + 
+  "&redirect_uri=http://localhost:3000/hs-callback" + 
+  "&scope=crm.objects.contacts.read%20crm.objects.companies.read";
+  /* "https://app.hubspot.com/oauth/authorize" +
     `?client_id=afd563db-c00e-4d47-b52d-d421800d6c01` +
-    `&scope=crm.objects.contacts.read` +
+    `&scope=crm.objects.companies.read` +
     `&redirect_uri=http://localhost:3000/hs-callback`;
-  +`&state=hubspot`;
+  +`&state=hubspot`;*/
 
   res.redirect(authUrl);
 });
