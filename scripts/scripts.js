@@ -2,9 +2,9 @@ function onClickToOutput() {
   document.getElementById("loadingText").innerHTML = "Laddar…";
   location.href = "/loading";
 }
-function downloadFile(){
-  var content = ['hej; tjo; hejsan; tjena'];
-  var blob = new Blob(content, {type: "text/csv"});
+
+function downloadFile(jsonContent){
+  var blob = new Blob([jsonContent], {type: "application/json"});
   var fileLink = document.createElement('a');
   fileLink.href = window.URL.createObjectURL(blob);
   const date = new Date(); 

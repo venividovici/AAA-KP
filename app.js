@@ -10,6 +10,9 @@ app.use("/scripts", express.static("scripts"));
 app.use("/files", express.static("files"));
 app.set("view engine", "ejs");
 
+module.exports = { hsResponse }
+module.exports = { fnResponse }
+
 //Landing page
 app.get("/", function (req, res) {
   res.render("pages/welcome", {});
@@ -32,6 +35,7 @@ app.get("/authenticate", function (req, res) {
 app.get("/output", function (req, res) {
   res.render("pages/output", {
     dataInfo: openAItext,
+    responses: hsResponse + fnResponse
   });
 });
 
@@ -94,6 +98,13 @@ async function requestOpenAI() {
     console.log(error.response);
   }
 }
+
+app.get("/reload", function (req, res) {
+  requestOpenAI();
+  res.render("pages/output", {
+    dataInfo: openAItext,
+  });
+});
 
 // Wrap the request function in a promise for easier use with Promise.all
 function requestPromise(options) {

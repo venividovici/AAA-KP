@@ -1,41 +1,44 @@
 <!DOCTYPE html>
 
 <html>
-  <head>
-    <title>Automated Analytics Accelerator</title>
 
-    <link rel="icon" type="image/x-icon" href="images/aaa.ico" />
-    <meta charset="UTF-8" />
-    <meta name="description" content="AAA - Kunskapspartner" />
-    <meta name="keywords" content="API, AI, BI" />
-    <meta name="author" content="Kunskapspartner" />
-    <script type="text/javascript" src="/scripts/scripts.js"></script>
-  </head>
+<head>
+  <title>Automated Analytics Accelerator</title>
 
-  <body>
-    <header>
-      <img src="images/logga.png" alt="AAA företagslogga" />
-      <h1>Output</h1>
-    </header>
+  <link rel="icon" type="image/x-icon" href="images/aaa.ico" />
+  <meta charset="UTF-8" />
+  <meta name="description" content="AAA - Kunskapspartner" />
+  <meta name="keywords" content="API, AI, BI" />
+  <meta name="author" content="Kunskapspartner" />
+  <script type="text/javascript" src="/scripts/scripts.js"></script>
+</head>
 
-    <main>
-      <div>
-        <p>Här har du AI genererad data.</p>
-        <textarea readonly><%= dataInfo %></textarea>
-        <button onclick="location.href='/'" type="button">
-          Tillbaka till startsidan
-        </button>
-      </div>
-      <div>
-        <p>
-          Här står text som förklarar att man med ett knapptryck kan ladda ner
-          all data till höger:
-        </p>
-        <button onclick="downloadFile()">Ladda ner</button>
+<body>
+  <header>
+    <img src="images/logga.png" alt="AAA företagslogga" />
+    <h1>Output</h1>
+  </header>
 
-      </div>
-    </main>
+  <main>
+    <div>
+      <p>Här har du AI genererad data.</p>
+      <textarea readonly><%= dataInfo %></textarea>
+      <button onclick="location.href='/'" type="button">
+        Tillbaka till startsidan
+      </button>
+    </div>
+    <div>
+      <p>
+        Här står text som förklarar att man med ett knapptryck kan ladda ner
+        all data till höger:
+      </p>
+      <button onclick="location.href='/output'">Ladda om</button>
+      <button onclick="downloadFile(<%= JSON.stringify(responses) %>)">Ladda ner</button>
 
-    <footer></footer>
-  </body>
+    </div>
+  </main>
+
+  <footer></footer>
+</body>
+
 </html>
