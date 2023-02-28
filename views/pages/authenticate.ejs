@@ -3,6 +3,7 @@
 <html>
 
 <head>
+	<link rel="stylesheet" type="text/css" href="/style/style.css">
 	<title>Automated Analytics Accelerator</title>
 	<link rel="icon" type="image/x-icon" href="images/aaa.ico">
 	<meta charset="UTF-8">
@@ -21,10 +22,10 @@
 
 	<main>
 		<p>Här kommer det att stå "Logga in" eller något.</p>
+		<p id="loadingText"></p>
+		<button onclick="onClickToOutput()" type="button" id="next" <%= (isFnEnabled || isHsEnabled) ? 'disabled' : '' %>>Nästa</button>
 		<button onclick="location.href='/fn-oauth' " type="button" id="fortnoxButton" <%= isFnEnabled ? '' : 'disabled' %>>Fortnox</button>
 		<button onclick="location.href='/hs-oauth' " type="button" id="HubSpotButton" <%= isHsEnabled ? '' : 'disabled' %>>HubSpot</button>
-        <button onclick="onClickToOutput()" type="button" id="output" <%= (isFnEnabled || isHsEnabled) ? 'disabled' : '' %>>Nästa</button>
-		<p id="loadingText"></p>
 	</main>
 
 	<footer>

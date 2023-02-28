@@ -1,25 +1,19 @@
-const { Configuration, OpenAIApi } = require("openai");
 const express = require("express");
 const querystring = require("querystring");
 const url = require("url");
 const request = require("request");
 const app = express();
-const fs = require("fs");
+//const fs = require("fs");
+const requestOpenAI = require("./ai.js");
+
 app.use("/images", express.static("images"));
 app.use("/scripts", express.static("scripts"));
 app.use("/files", express.static("files"));
 app.set("view engine", "ejs");
-const axios = require("axios");
+app.use("/style", express.static("style")); 
 
 //Landing page
-app.get("/", function (req, res) {
-  res.render("pages/welcome", {});
-});
-
-//Welcome page
-app.get("/welcome", function (req, res) {
-  res.redirect("/");
-});
+app.get("/", (req, res) => res.render("pages/welcome", {}));
 
 //Authenticate page
 app.get("/authenticate", function (req, res) {
@@ -31,10 +25,14 @@ app.get("/authenticate", function (req, res) {
 
 //Output page
 app.get("/output", function (req, res) {
-  res.render("pages/output", {
-    dataInfo: openAItext,
-    responses: jsonResponse
-  });
+
+  if (openAItext == "") res.redirect("/authenticate");
+  else
+    res.render("pages/output", {
+      dataInfo: openAItext,
+      responses: jsonResponse
+    });
+
 });
 
 //Loading function
@@ -71,7 +69,6 @@ app.get("/loading", function (req, res) {
     requestPromise(hubspotContacts),
     requestPromise(hubspotCompanies),
     requestPromise(fortnox),
-    requestOpenAI(),
   ])
     .then((responses) => {
       var jsonHubSpot1 = JSON.parse(responses[0]).results;
@@ -79,35 +76,17 @@ app.get("/loading", function (req, res) {
       var jsonFortnox = JSON.parse(responses[2]);
       jsonResponse = '[' + JSON.stringify(jsonHubSpot1) + ',' + JSON.stringify(jsonHubSpot2) + ',' + JSON.stringify(jsonFortnox) + ']'
 
-      res.redirect("/output");
+      requestOpenAI([
+        jsonResponse
+      ]).then(res.redirect("/output"))
     })
     .catch((error) => {
       console.error(error);
       res.status(500).send("Error");
     });
 });
-
 // Promise for OpenAI
 var openAItext = "";
-
-async function requestOpenAI() {
-  const configuration = new Configuration({
-    apiKey: "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",
-  });
-
-  const openai = new OpenAIApi(configuration);
-  try {
-    const completion = await openai.createCompletion({
-      model: "text-davinci-003",
-      max_tokens: 1500,
-      prompt: `Analysera denna data. Data: ${jsonResponse}`,
-    });
-    console.log(completion.data.choices[0].text);
-    openAItext = completion.data.choices[0].text;
-  } catch (error) {
-    console.log(error.response);
-  }
-}
 
 // Wrap the request function in a promise for easier use with Promise.all
 function requestPromise(options) {
@@ -121,11 +100,6 @@ function requestPromise(options) {
     });
   });
 }
-
-/* //404 page (HAS TO BE THE LAST @app.get ROUTE IN THIS DOCUMENT)
-  app.get("/*", function (req, res) {
-    res.redirect("/");
-  }); */
 
 var fnAuthCode;
 var fnAccessToken;
