@@ -33,7 +33,7 @@ async function requestOpenAI(iterableData) {
                 \n\nSummarized Data:${summarizedData}\n\n
                 Databatch( no. ${i} of ${generations})):${iterableData[i]}`,
       });
-      summarizedData = completion.data.choices[0].text;
+      summarizedData+=completion.data.choices[0].text;
     }
 
     console.log(summarizedData);
