@@ -99,13 +99,6 @@ async function requestOpenAI() {
   }
 }
 
-app.get("/reload", function (req, res) {
-  requestOpenAI();
-  res.render("pages/output", {
-    dataInfo: openAItext,
-  });
-});
-
 // Wrap the request function in a promise for easier use with Promise.all
 function requestPromise(options) {
   return new Promise((resolve, reject) => {
