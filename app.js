@@ -9,7 +9,7 @@ app.use("/images", express.static("images"));
 app.use("/scripts", express.static("scripts"));
 app.use("/files", express.static("files"));
 app.set("view engine", "ejs");
-const axios = require("axios"); 
+app.use("/style", express.static("style")); 
 
 //Landing page
 app.get("/", function (req, res) {
