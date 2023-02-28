@@ -9,6 +9,7 @@ app.use("/images", express.static("images"));
 app.use("/scripts", express.static("scripts"));
 app.use("/files", express.static("files"));
 app.set("view engine", "ejs");
+const axios = require("axios"); 
 
 //Landing page
 app.get("/", function (req, res) {
@@ -36,11 +37,12 @@ app.get("/output", function (req, res) {
 });
 
 //Loading function
-var hsResponse = "";
+var hsResponse1 = "";
+var hsResponse2 = "";
 var fnResponse = "";
 
 app.get("/loading", function (req, res) {
-  const hubspot = {
+  const hubspotContacts = {
     method: "GET",
     url: "https://api.hubspot.com/crm/v3/objects/contacts",
     headers: {
@@ -48,6 +50,16 @@ app.get("/loading", function (req, res) {
       "Content-Type": "application/json",
     },
   };
+
+  const hubspotCompanies = {
+    method: "GET",
+    url: "https://api.hubspot.com/crm/v3/objects/companies",
+    headers: {
+      Authorization: "Bearer " + hsAccessToken,
+      "Content-Type": "application/json",
+    },
+  };
+
   const fortnox = {
     method: "GET",
     url: "https://api.fortnox.se/3/companyinformation",
@@ -57,15 +69,17 @@ app.get("/loading", function (req, res) {
   };
 
   Promise.all([
-    requestPromise(hubspot),
+    requestPromise(hubspotContacts),
+    requestPromise(hubspotCompanies),
     requestPromise(fortnox),
     requestOpenAI(),
   ])
     .then((responses) => {
-      hsResponse = responses[0];
-      fnResponse = responses[1];
+      hsResponse1 = responses[0];
+      hsResponse2 = responses[1];
+      fnResponse = responses[2];
       console.log("--------------------------------------------------------"); 
-      console.log(hsResponse, fnResponse); 
+      console.log(hsResponse1, hsResponse2, fnResponse); 
 
       res.redirect("/output");
     })
@@ -88,7 +102,7 @@ async function requestOpenAI() {
     const completion = await openai.createCompletion({
       model: "text-davinci-003",
       max_tokens: 1500,
-      prompt: `Analysera denna data. Data: ${hsResponse + fnResponse}`,
+      prompt: `Analysera denna data. Data: ${hsResponse1 + hsResponse2 + fnResponse}`,
     });
     console.log(completion.data.choices[0].text);
     openAItext = completion.data.choices[0].text;
