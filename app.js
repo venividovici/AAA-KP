@@ -33,7 +33,7 @@ app.get("/authenticate", function (req, res) {
 app.get("/output", function (req, res) {
   res.render("pages/output", {
     dataInfo: openAItext,
-    responses: hsResponse + fnResponse
+    responses: hsResponse1 + hsResponse2 + fnResponse
   });
 });
 
