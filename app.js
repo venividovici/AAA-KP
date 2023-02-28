@@ -3,7 +3,6 @@ const querystring = require("querystring");
 const url = require("url");
 const request = require("request");
 const app = express();
-//const fs = require("fs");
 const requestOpenAI = require("./ai.js");
 
 app.use("/images", express.static("images"));
@@ -11,6 +10,7 @@ app.use("/scripts", express.static("scripts"));
 app.use("/files", express.static("files"));
 app.set("view engine", "ejs");
 app.use("/style", express.static("style")); 
+
 
 //Landing page
 app.get("/", (req, res) => res.render("pages/welcome", {}));
@@ -39,6 +39,11 @@ app.get("/output", function (req, res) {
 var jsonResponse = '';
 
 app.get("/loading", function (req, res) {
+  
+  if (Date.now() - hsTimer > 3600000 || Date.now() - fnTimer > 3600000) {
+    //TODO: 1 hour has passed, expire keys and redirect to authenticate!
+  }
+
   const hubspotContacts = {
     method: "GET",
     url: "https://api.hubspot.com/crm/v3/objects/contacts",
@@ -78,7 +83,9 @@ app.get("/loading", function (req, res) {
 
       requestOpenAI([
         jsonResponse
-      ]).then(res.redirect("/output"))
+      ]).then((response) => { 
+        openAItext = response;
+        res.redirect("/output") })
     })
     .catch((error) => {
       console.error(error);
@@ -101,8 +108,7 @@ function requestPromise(options) {
   });
 }
 
-var fnAuthCode;
-var fnAccessToken;
+var fnAuthCode, fnAccessToken, fnTimer;
 
 //Fortnox callback (exchange code for token)
 app.get("/fn-callback", function (req, res) {
@@ -131,6 +137,7 @@ app.get("/fn-callback", function (req, res) {
         console.log(body);
         const responseBody = JSON.parse(body);
         fnAccessToken = responseBody.access_token;
+        fnTimer = Date.now();
       }
     });
   }
@@ -143,8 +150,7 @@ app.get("/fn-oauth", function (req, res) {
   );
 });
 
-var hsAuthCode;
-var hsAccessToken;
+var hsAuthCode, hsAccessToken, hsTimer;
 
 //Hubspot callback (exchange code for token)
 app.get("/hs-callback", function (req, res) {
@@ -174,6 +180,7 @@ app.get("/hs-callback", function (req, res) {
         console.log(body);
         const responseBody = JSON.parse(body);
         hsAccessToken = responseBody.access_token;
+        hsTimer = Date.now();
       }
     });
   }
@@ -187,12 +194,6 @@ app.get("/hs-oauth", function (req, res) {
     "?client_id=afd563db-c00e-4d47-b52d-d421800d6c01" +
     "&redirect_uri=http://localhost:3000/hs-callback" +
     "&scope=crm.objects.contacts.read%20crm.objects.companies.read";
-  /* "https://app.hubspot.com/oauth/authorize" +
-    `?client_id=afd563db-c00e-4d47-b52d-d421800d6c01` +
-    `&scope=crm.objects.companies.read` +
-    `&redirect_uri=http://localhost:3000/hs-callback`;
-  +`&state=hubspot`;*/
-
   res.redirect(authUrl);
 });
 
