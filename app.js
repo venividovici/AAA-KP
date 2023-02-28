@@ -25,18 +25,18 @@ app.get("/authenticate", function (req, res) {
 
 //Output page
 app.get("/output", function (req, res) {
+
   if (openAItext == "") res.redirect("/authenticate");
   else
     res.render("pages/output", {
       dataInfo: openAItext,
-      responses: hsResponse1 + hsResponse2 + fnResponse,
+      responses: jsonResponse
     });
+
 });
 
 //Loading function
-var hsResponse1 = "";
-var hsResponse2 = "";
-var fnResponse = "";
+var jsonResponse = '';
 
 app.get("/loading", function (req, res) {
   
@@ -74,23 +74,18 @@ app.get("/loading", function (req, res) {
     requestPromise(hubspotContacts),
     requestPromise(hubspotCompanies),
     requestPromise(fortnox),
-    requestOpenAI([
-      "abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc",
-      "def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def",
-      "ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi",
-      "jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl",
-      "mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno",
-    ]),
   ])
     .then((responses) => {
-      hsResponse1 = responses[0];
-      hsResponse2 = responses[1];
-      fnResponse = responses[2];
-      openAItext = responses[3];
-      console.log("--------------------------------------------------------");
-      console.log(hsResponse1, hsResponse2, fnResponse);
+      var jsonHubSpot1 = JSON.parse(responses[0]).results;
+      var jsonHubSpot2 = JSON.parse(responses[1]).results;
+      var jsonFortnox = JSON.parse(responses[2]);
+      jsonResponse = '[' + JSON.stringify(jsonHubSpot1) + ',' + JSON.stringify(jsonHubSpot2) + ',' + JSON.stringify(jsonFortnox) + ']'
 
-      res.redirect("/output");
+      requestOpenAI([
+        jsonResponse
+      ]).then((response) => { 
+        openAItext = response;
+        res.redirect("/output") })
     })
     .catch((error) => {
       console.error(error);
