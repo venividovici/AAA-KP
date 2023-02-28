@@ -40,6 +40,19 @@ p{
     margin-top: 5%; 
 }
 
+textarea{
+    margin-left: 10%; 
+    height: 150px; 
+    width: 75%; 
+}
+
+#next{
+    margin-right: 2%; 
+    margin-bottom: 2%; 
+    width: 200px; 
+
+}
+
 button {
     border-radius: 4px;
     background-color: #FFFFFF;
@@ -51,8 +64,7 @@ button {
     width: 200px;
     transition: all 0.5s;
     cursor: pointer;
-    float: right; 
-    margin-right: 50px;
+    float: right;  
   }
   
 button span {
