@@ -11,9 +11,6 @@ app.use("/files", express.static("files"));
 app.set("view engine", "ejs");
 const axios = require("axios"); 
 
-module.exports = { hsResponse }
-module.exports = { fnResponse }
-
 //Landing page
 app.get("/", function (req, res) {
   res.render("pages/welcome", {});
