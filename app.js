@@ -108,6 +108,22 @@ function requestPromise(options) {
   });
 }
 
+app.get("/reloadAIResponse", function (req, res) {
+  Promise.all([
+    requestOpenAI(),
+  ])
+  .then((responses) => {
+    res.render("pages/output", {
+      dataInfo: openAItext,
+      responses: hsResponse1 + hsResponse2 + fnResponse
+    });
+  })
+  .catch((error) => {
+    console.error(error);
+    res.status(500).send("Error");
+  });
+});
+
 var fnAuthCode, fnAccessToken, fnTimer;
 
 //Fortnox callback (exchange code for token)
