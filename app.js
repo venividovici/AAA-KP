@@ -1,10 +1,11 @@
-const { Configuration, OpenAIApi } = require("openai");
 const express = require("express");
 const querystring = require("querystring");
 const url = require("url");
 const request = require("request");
 const app = express();
-const fs = require("fs");
+//const fs = require("fs");
+const requestOpenAI = require("./ai.js");
+
 app.use("/images", express.static("images"));
 app.use("/scripts", express.static("scripts"));
 app.use("/files", express.static("files"));
@@ -12,14 +13,7 @@ app.set("view engine", "ejs");
 const axios = require("axios"); 
 
 //Landing page
-app.get("/", function (req, res) {
-  res.render("pages/welcome", {});
-});
-
-//Welcome page
-app.get("/welcome", function (req, res) {
-  res.redirect("/");
-});
+app.get("/", (req, res) => res.render("pages/welcome", {}));
 
 //Authenticate page
 app.get("/authenticate", function (req, res) {
@@ -31,10 +25,12 @@ app.get("/authenticate", function (req, res) {
 
 //Output page
 app.get("/output", function (req, res) {
-  res.render("pages/output", {
-    dataInfo: openAItext,
-    responses: hsResponse1 + hsResponse2 + fnResponse
-  });
+  if (openAItext == "") res.redirect("/authenticate");
+  else
+    res.render("pages/output", {
+      dataInfo: openAItext,
+      responses: hsResponse1 + hsResponse2 + fnResponse
+    });
 });
 
 //Loading function
@@ -73,7 +69,13 @@ app.get("/loading", function (req, res) {
     requestPromise(hubspotContacts),
     requestPromise(hubspotCompanies),
     requestPromise(fortnox),
-    requestOpenAI(),
+    requestOpenAI([
+      "abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc,abc",
+      "def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def,def",
+      "ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi,ghi",
+      "jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl,jkl",
+      "mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno,mno",
+    ]),
   ])
     .then((responses) => {
       hsResponse1 = responses[0];
@@ -89,44 +91,9 @@ app.get("/loading", function (req, res) {
       res.status(500).send("Error");
     });
 });
-
 // Promise for OpenAI
 var openAItext = "";
 
-async function requestOpenAI() {
-  const configuration = new Configuration({
-    apiKey: "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",
-  });
-
-  const openai = new OpenAIApi(configuration);
-  try {
-    const completion = await openai.createCompletion({
-      model: "text-davinci-003",
-      max_tokens: 1500,
-      prompt: `Analysera denna data. Data: ${hsResponse1 + hsResponse2 + fnResponse}`,
-    });
-    console.log(completion.data.choices[0].text);
-    openAItext = completion.data.choices[0].text;
-  } catch (error) {
-    console.log(error.response);
-  }
-}
-
-app.get("/reloadAIResponse", function (req, res) {
-  Promise.all([
-    requestOpenAI(), 
-  ])
-  .then((responses) => {
-    res.render("pages/output", {
-      dataInfo: openAItext,
-      responses: hsResponse1 + hsResponse2 + fnResponse
-    });
-  })
-  .catch((error) => {
-    console.error(error);
-    res.status(500).send("Error");
-  });
-});
 
 // Wrap the request function in a promise for easier use with Promise.all
 function requestPromise(options) {
@@ -140,11 +107,6 @@ function requestPromise(options) {
     });
   });
 }
-
-/* //404 page (HAS TO BE THE LAST @app.get ROUTE IN THIS DOCUMENT)
-  app.get("/*", function (req, res) {
-    res.redirect("/");
-  }); */
 
 var fnAuthCode;
 var fnAccessToken;
