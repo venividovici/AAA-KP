@@ -3,6 +3,7 @@
 <html>
 
 <head>
+    <link rel="stylesheet" type="text/css" href="/style/style.css">
     <title>Automated Analytics Accelerator</title>
     <link rel="icon" type="image/x-icon" href="images/aaa.ico">
     <meta charset="UTF-8">
@@ -12,21 +13,30 @@
 </head>
 
 <body>
-
+<div className="App">
     <header>
         <img src="images/logga.png" alt="AAA företagslogga">
         <h1>Välkommen!</h1>
     </header>
 
     <main>
-        <p>Här kommer det att stå en massa onödig info.</p>
-        <button onclick="location.href='/authenticate' " type="button">Gå till autentisering</button>
+        <p>
+        Välkommen till Automated Analytics Accelerator! <br><br>
+        I denna webapplikation kommer du snart att få autentisera dig på Hubspot och Fortnox. 
+        Efter autentiseringen kommer applikationen samla data från respektive system och ta fram 
+        en JSON fil av denna data. Datan kommer finnas tillgänglig i en JSON fil som du kan ladda ner till 
+        din dator med information kring interaktion med kunder vid olika tidpunkter och hur dessa återspeglas i fakturor. 
+        Denna fil kan du enkelt applicera på Microsoft Power BI för att visa datan i modeller och diagram.  
+        Utöver filen kommer du även att få en AI genererad analys av datan som du kan ladda om, i de 
+        fall du vill ha ytterligare analys. Tryck på knappen för att komma till autentiseringssidan! 
+        </p>
+        <button onclick="location.href='/authenticate' " type="button" id="next">Gå till autentisering</button>
     </main>
 
     <footer>
 
     </footer>
-
+</div>
 </body>
 
 </html>
