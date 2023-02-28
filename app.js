@@ -5,12 +5,11 @@ const url = require("url");
 const request = require("request");
 const app = express();
 const fs = require("fs");
-
 app.use("/images", express.static("images"));
 app.use("/scripts", express.static("scripts"));
 app.use("/files", express.static("files"));
 app.set("view engine", "ejs");
-const axios = require("axios"); 
+const axios = require("axios");
 
 //Landing page
 app.get("/", function (req, res) {
@@ -34,20 +33,12 @@ app.get("/authenticate", function (req, res) {
 app.get("/output", function (req, res) {
   res.render("pages/output", {
     dataInfo: openAItext,
-    responses: mergedObject
+    responses: jsonResponse
   });
 });
 
-const mergedObject = {
-  ...hsResponse1,
-  ...hsResponse2,
-  ...fnResponse
-};
-
 //Loading function
-var hsResponse1 = "";
-var hsResponse2 = "";
-var fnResponse = "";
+var jsonResponse = '';
 
 app.get("/loading", function (req, res) {
   const hubspotContacts = {
@@ -83,11 +74,10 @@ app.get("/loading", function (req, res) {
     requestOpenAI(),
   ])
     .then((responses) => {
-      hsResponse1 = responses[0];
-      hsResponse2 = responses[1];
-      fnResponse = responses[2];
-      console.log("--------------------------------------------------------"); 
-      console.log(hsResponse1, hsResponse2, fnResponse); 
+      var jsonHubSpot1 = JSON.parse(responses[0]).results;
+      var jsonHubSpot2 = JSON.parse(responses[1]).results;
+      var jsonFortnox = JSON.parse(responses[2]);
+      jsonResponse = '[' + JSON.stringify(jsonHubSpot1) + ',' + JSON.stringify(jsonHubSpot2) + ',' + JSON.stringify(jsonFortnox) + ']'
 
       res.redirect("/output");
     })
@@ -110,7 +100,7 @@ async function requestOpenAI() {
     const completion = await openai.createCompletion({
       model: "text-davinci-003",
       max_tokens: 1500,
-      prompt: `Analysera denna data. Data: ${hsResponse1 + hsResponse2 + fnResponse}`,
+      prompt: `Analysera denna data. Data: ${jsonResponse}`,
     });
     console.log(completion.data.choices[0].text);
     openAItext = completion.data.choices[0].text;
@@ -219,10 +209,10 @@ app.get("/hs-callback", function (req, res) {
 //Hubspot OAuth
 app.get("/hs-oauth", function (req, res) {
   const authUrl =
-  "https://app-eu1.hubspot.com/oauth/authorize" + 
-  "?client_id=afd563db-c00e-4d47-b52d-d421800d6c01" + 
-  "&redirect_uri=http://localhost:3000/hs-callback" + 
-  "&scope=crm.objects.contacts.read%20crm.objects.companies.read";
+    "https://app-eu1.hubspot.com/oauth/authorize" +
+    "?client_id=afd563db-c00e-4d47-b52d-d421800d6c01" +
+    "&redirect_uri=http://localhost:3000/hs-callback" +
+    "&scope=crm.objects.contacts.read%20crm.objects.companies.read";
   /* "https://app.hubspot.com/oauth/authorize" +
     `?client_id=afd563db-c00e-4d47-b52d-d421800d6c01` +
     `&scope=crm.objects.companies.read` +
