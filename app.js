@@ -5,6 +5,7 @@ const url = require("url");
 const request = require("request");
 const app = express();
 const fs = require("fs");
+
 app.use("/images", express.static("images"));
 app.use("/scripts", express.static("scripts"));
 app.use("/files", express.static("files"));
@@ -33,9 +34,15 @@ app.get("/authenticate", function (req, res) {
 app.get("/output", function (req, res) {
   res.render("pages/output", {
     dataInfo: openAItext,
-    responses: hsResponse1 + hsResponse2 + fnResponse
+    responses: mergedObject
   });
 });
+
+const mergedObject = {
+  ...hsResponse1,
+  ...hsResponse2,
+  ...fnResponse
+};
 
 //Loading function
 var hsResponse1 = "";
