@@ -17,16 +17,16 @@
 
 	<header>
 		<img src="images/logga.png" alt="AAA företagslogga">
-		<h1>Autentisera dig</h1>
+		<h1 id="title">Logga in</h1>
 	</header>
 
 	<main>
-		<p>Här kommer det att stå "Logga in" eller något.</p>
+		<p>Vänligen autentisera dig via tjänsterna för att gå vidare till nästa steg:</p>
 		<p id="loadingText"></p>
-		<button onclick="onClickToOutput()" type="button" id="next" <%= (isFnEnabled || isHsEnabled) ? 'disabled' : '' %>>Nästa</button>
-		<button onclick="location.href='/fn-oauth' " type="button" id="fortnoxButton" <%= isFnEnabled ? '' : 'disabled' %>>Fortnox</button>
-		<button onclick="location.href='/hs-oauth' " type="button" id="HubSpotButton" <%= isHsEnabled ? '' : 'disabled' %>>HubSpot</button>
+		<button onclick="location.href='/fn-oauth' " type="button" id="buttonAuth" <%= isFnEnabled ? '' : 'disabled' %>>Fortnox</button>
+		<button onclick="location.href='/hs-oauth' " type="button" id="buttonAuth" <%= isHsEnabled ? '' : 'disabled' %>>HubSpot</button>
 	</main>
+		<button onclick="onClickToOutput()" type="button" id="next" <%= (isFnEnabled || isHsEnabled) ? 'disabled' : '' %>><span>Nästa</span></button>
 
 	<footer>
 

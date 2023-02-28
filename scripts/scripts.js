@@ -1,5 +1,6 @@
 function onClickToOutput() {
   document.getElementById("loadingText").innerHTML = "Laddar…";
+  document.getElementById("next").disabled = true;
   location.href = "/loading";
 }
 
