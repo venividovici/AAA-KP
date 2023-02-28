@@ -31,9 +31,11 @@ async function requestOpenAI(iterableData) {
                 beyond just the condensed summary.
                 
                 \n\nSummarized Data:${summarizedData}\n\n
-                Databatch( no. ${i} of ${generations})):${iterableData[i]}`,
+                Databatch( no. ${i} of ${generations})):${iterableData[i]}
+                
+                \n\nNew version of Summarized Data that includes a summarized version of databatch:\n`,
       });
-      summarizedData+=completion.data.choices[0].text;
+      summarizedData=completion.data.choices[0].text;
     }
 
     console.log(summarizedData);

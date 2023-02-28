@@ -1,10 +1,9 @@
-//const { Configuration, OpenAIApi } = require("openai");
 const express = require("express");
 const querystring = require("querystring");
 const url = require("url");
 const request = require("request");
 const app = express();
-const fs = require("fs");
+//const fs = require("fs");
 const requestOpenAI = require("./ai.js");
 
 app.use("/images", express.static("images"));
@@ -13,14 +12,7 @@ app.use("/files", express.static("files"));
 app.set("view engine", "ejs");
 
 //Landing page
-app.get("/", function (req, res) {
-  res.render("pages/welcome", {});
-});
-
-//Welcome page
-app.get("/welcome", function (req, res) {
-  res.redirect("/");
-});
+app.get("/", (req, res) => res.render("pages/welcome", {}));
 
 //Authenticate page
 app.get("/authenticate", function (req, res) {
@@ -32,9 +24,11 @@ app.get("/authenticate", function (req, res) {
 
 //Output page
 app.get("/output", function (req, res) {
-  res.render("pages/output", {
-    dataInfo: openAItext,
-  });
+  if (openAItext == "") res.redirect("/authenticate");
+  else
+    res.render("pages/output", {
+      dataInfo: openAItext,
+    });
 });
 
 //Loading function
