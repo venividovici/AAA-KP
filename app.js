@@ -33,7 +33,6 @@ app.get("/output", function (req, res) {
     });
 });
 
-//Loading function
 //TODO: this function fetches all the data and calls on the AI, it can be named better
 var jsonResponse = "";
 var openAItext = "";
