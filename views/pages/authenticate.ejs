@@ -14,12 +14,12 @@
 </head>
 
 <body>
-
+	<div id="loadingSymbol"><div></div><div></div><div></div><div></div></div>
 	<header>
         <img src="images/logga.png" alt="AAA företagslogga" draggable='false' onclick="location.href='/'">
 		<h1 id="title">Logga in</h1>
 	</header>
-
+	<div id="loadingBlur">
 	<main>
 		<p>Vänligen autentisera dig via tjänsterna för att gå vidare till nästa steg:</p>
 		<p id="loadingText"></p>
@@ -27,7 +27,7 @@
 		<button onclick="location.href='/hs-oauth' " type="button" id="buttonAuth" <%= isHsEnabled ? '' : 'disabled' %>>HubSpot</button>
 	</main>
 		<button onclick="onClickToOutput()" type="button" id="next" <%= (isFnEnabled || isHsEnabled) ? 'disabled' : '' %>><span>Nästa</span></button>
-
+	</div>
 	<footer>
 		<div id="progress">
             <div id="progress-bar"></div>

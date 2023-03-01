@@ -1,9 +1,11 @@
 function onClickToOutput() {
-  document.getElementById("loadingText").innerHTML = "Laddar…";
+  //document.getElementById("loadingText").innerHTML = "Laddar…";
+  loadingBlur();
   document.getElementById("next").disabled = true;
   location.href = "/loading";
 }
 
+<<<<<<< Updated upstream
 function reload(){
   var spinner = document.createElement('i')
   spinner.className = "fa fa-refresh fa-spin"
@@ -13,8 +15,27 @@ function reload(){
 function downloadFile(jsonContent){
   var blob = new Blob([jsonContent], {type: "application/json"});
   var fileLink = document.createElement('a');
+=======
+function downloadFile(jsonContent) {
+  var blob = new Blob([jsonContent], { type: "application/json" });
+  var fileLink = document.createElement("a");
+>>>>>>> Stashed changes
   fileLink.href = window.URL.createObjectURL(blob);
-  const date = new Date(); 
-  fileLink.download = 'AAA ' + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+  const date = new Date();
+  fileLink.download =
+    "AAA " +
+    date.getFullYear() +
+    "-" +
+    (date.getMonth() + 1) +
+    "-" +
+    date.getDate();
   fileLink.click();
- }
+}
+
+function loadingBlur() {
+  var element = document.getElementById("loadingBlur");
+  element.classList.add("loadingBlur");
+
+  var element2 = document.getElementById("loadingSymbol");
+  element2.classList.add("lds-ellipsis");
+}
