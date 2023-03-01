@@ -47,11 +47,11 @@ body {
 main{
   width: 100%;
   text-align: center;
-  padding-bottom: 50px;
+  padding-bottom: 60px;
 }
 
 footer{
-  position: fixed;
+  position: absolute;
   width: 99%;
   bottom: 0;
 }
