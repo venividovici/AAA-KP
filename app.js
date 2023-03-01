@@ -4,6 +4,7 @@ const url = require("url");
 const request = require("request");
 const app = express();
 const requestOpenAI = require("./ai.js");
+const resetMs = 3599980; //access token lifespan
 
 app.use("/images", express.static("images"));
 app.use("/scripts", express.static("scripts"));
@@ -32,10 +33,10 @@ app.get("/output", function (req, res) {
     });
 });
 
+
 //Loading function
 var jsonResponse = "";
-const resetMs = 3599980;
-
+var openAItext = "";
 app.get("/loading", function (req, res) {
   if (Date.now() - hsTimer > resetMs || Date.now() - fnTimer > resetMs) {
     fnAuthCode = fnAccessToken = hsAuthCode = hsAccessToken = null;
@@ -92,12 +93,10 @@ app.get("/loading", function (req, res) {
       })
       .catch((error) => {
         console.error(error);
-        res.status(500).send("Error");
+        res.status(500).send("Ooops :^)");
       });
   }
 });
-// Promise for OpenAI
-var openAItext = "";
 
 // Wrap the request function in a promise for easier use with Promise.all
 function requestPromise(options) {
@@ -132,9 +131,8 @@ app.get("/reloadAIResponse", function (req, res) {
   }
 });
 
-var fnAuthCode, fnAccessToken, fnTimer;
-
 //Fortnox callback (exchange code for token)
+var fnAuthCode, fnAccessToken, fnTimer;
 app.get("/fn-callback", function (req, res) {
   const { pathname, query } = url.parse(req.url);
   const queryParams = querystring.parse(query);
@@ -168,15 +166,20 @@ app.get("/fn-callback", function (req, res) {
   res.redirect("/authenticate");
 });
 
-app.get("/fn-oauth", function (req, res) {
+app.get("/fn-oauth", (req, res) => 
   res.redirect(
-    "https://apps.fortnox.se/oauth-v1/auth?client_id=22Fp35NiBGUD&redirect_uri=http://localhost:3000/fn-callback&scope=companyinformation&state=somestate&access_type=offline&response_type=code&account_type=service"
-  );
-});
-
-var hsAuthCode, hsAccessToken, hsTimer;
+    "https://apps.fortnox.se/oauth-v1/auth"+
+    "?client_id=22Fp35NiBGUD"+
+    "&redirect_uri=http://localhost:3000/fn-callback"+
+    "&scope=companyinformation"+
+    "&state=somestate"+
+    "&access_type=offline"+
+    "&response_type=code"+
+    "&account_type=service"
+  ));
 
 //Hubspot callback (exchange code for token)
+var hsAuthCode, hsAccessToken, hsTimer;
 app.get("/hs-callback", function (req, res) {
   const { pathname, query } = url.parse(req.url);
   const queryParams = querystring.parse(query);
@@ -212,7 +215,7 @@ app.get("/hs-callback", function (req, res) {
 });
 
 //Hubspot OAuth
-app.get("/hs-oauth", function (req, res) {
+app.get("/hs-oauth", (req, res) => {
   const authUrl =
     "https://app-eu1.hubspot.com/oauth/authorize" +
     "?client_id=afd563db-c00e-4d47-b52d-d421800d6c01" +
@@ -222,6 +225,4 @@ app.get("/hs-oauth", function (req, res) {
 });
 
 // Start server on port 3000
-app.listen(3000, function (req, res) {
-  console.log("Server started at http://localhost:3000");
-});
+app.listen(3000, (req, res) => console.log("Server started at http://localhost:3000"));
