@@ -77,7 +77,6 @@ textarea {
 }
 
 #besides{
-  display: inline-block;
   float: left;
   width: 25%;
   padding-right: 50%;
@@ -85,6 +84,9 @@ textarea {
 
 /* 'NEXT' BUTTON */
 #next {
+  position: absolute;
+  left: 85%;
+  bottom: 15%;
   border-radius: 4px;
   background-color: #2a4a56;
   border: none;
@@ -94,7 +96,7 @@ textarea {
   width: 150px;
   height: 150px;
   transition: all 0.5s;
-  margin: 50px;
+  /* margin: 50px; */
   float: right;
   cursor: pointer;
 }
@@ -133,11 +135,17 @@ textarea {
 }
 
 #next:disabled {
+  position: absolute;
+  left: 85%;
+  bottom: 15%;
   background-color: #dbeaf0;
   cursor: default;
 }
 
 #next:disabled:hover {
+  position: absolute;
+  left: 85%;
+  bottom: 15%;
   padding-right: 0px;
   padding-left: 25px;
 
@@ -207,6 +215,7 @@ textarea {
   font-size: 40px;
   margin-left: 20%;
   cursor: pointer;
+  float: left;
 }
 
 #downloadButton:hover{
@@ -223,15 +232,6 @@ i{
   top: 50%;
   z-index: 1; 
   margin-bottom: 2%;   
-}
-
-#progress-bar {
-  position: absolute;
-  background: lightseagreen;
-  height: 5px;
-  width: 0%;
-  top: 50%;
-  left: 0;
 }
 
 #progress-num {
@@ -256,13 +256,14 @@ i{
 #progress-num .step {
   border: 3px solid lightgray;
   border-radius: 100%;
-  width: 25px;
-  height: 25px;
-  line-height: 25px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
   text-align: center;
   background-color: #fff;
   font-family: sans-serif;
-  font-size: 14px;    
+  color: #244c5a;
+  font-size: 20px;
   position: relative;
   z-index: 1;
 }

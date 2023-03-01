@@ -19,7 +19,7 @@ app.get("/", (req, res) => res.render("pages/welcome", {}));
 app.get("/authenticate", (req, res) =>
   res.render("pages/authenticate", {
     isHsEnabled: !hsAuthCode,
-    isFnEnabled: !fnAuthCode /*  */,
+    isFnEnabled: !fnAuthCode,
   })
 );
 
