@@ -110,12 +110,13 @@ function requestPromise(options) {
 
 app.get("/reloadAIResponse", function (req, res) {
   Promise.all([
-    requestOpenAI(),
+    requestOpenAI([jsonResponse]),
   ])
-  .then((responses) => {
+  .then((response) => {
+    openAItext = response; 
     res.render("pages/output", {
       dataInfo: openAItext,
-      responses: hsResponse1 + hsResponse2 + fnResponse
+      responses: jsonResponse
     });
   })
   .catch((error) => {
