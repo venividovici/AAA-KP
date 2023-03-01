@@ -9,88 +9,92 @@ app.use("/images", express.static("images"));
 app.use("/scripts", express.static("scripts"));
 app.use("/files", express.static("files"));
 app.set("view engine", "ejs");
-app.use("/style", express.static("style")); 
-
+app.use("/style", express.static("style"));
 
 //Landing page
 app.get("/", (req, res) => res.render("pages/welcome", {}));
 
 //Authenticate page
-app.get("/authenticate", function (req, res) {
+app.get("/authenticate", (req, res) =>
   res.render("pages/authenticate", {
     isHsEnabled: !hsAuthCode,
-    isFnEnabled: !fnAuthCode,
-  });
-});
+    isFnEnabled: !fnAuthCode /*  */,
+  })
+);
 
 //Output page
 app.get("/output", function (req, res) {
-
   if (openAItext == "") res.redirect("/authenticate");
   else
     res.render("pages/output", {
       dataInfo: openAItext,
-      responses: jsonResponse
+      responses: jsonResponse,
     });
-
 });
 
 //Loading function
-var jsonResponse = '';
+var jsonResponse = "";
+const resetMs = 3599980;
 
 app.get("/loading", function (req, res) {
-  
-  if (Date.now() - hsTimer > 3600000 || Date.now() - fnTimer > 3600000) {
-    //TODO: 1 hour has passed, expire keys and redirect to authenticate!
+  if (Date.now() - hsTimer > resetMs || Date.now() - fnTimer > resetMs) {
+    fnAuthCode = fnAccessToken = hsAuthCode = hsAccessToken = null;
+    res.redirect("/authenticate");
+  } else {
+    const hubspotContacts = {
+      method: "GET",
+      url: "https://api.hubspot.com/crm/v3/objects/contacts",
+      headers: {
+        Authorization: "Bearer " + hsAccessToken,
+        "Content-Type": "application/json",
+      },
+    };
+
+    const hubspotCompanies = {
+      method: "GET",
+      url: "https://api.hubspot.com/crm/v3/objects/companies",
+      headers: {
+        Authorization: "Bearer " + hsAccessToken,
+        "Content-Type": "application/json",
+      },
+    };
+
+    const fortnox = {
+      method: "GET",
+      url: "https://api.fortnox.se/3/companyinformation",
+      headers: {
+        Authorization: "Bearer " + fnAccessToken,
+      },
+    };
+
+    Promise.all([
+      requestPromise(hubspotContacts),
+      requestPromise(hubspotCompanies),
+      requestPromise(fortnox),
+    ])
+      .then((responses) => {
+        var jsonHubSpot1 = JSON.parse(responses[0]).results;
+        var jsonHubSpot2 = JSON.parse(responses[1]).results;
+        var jsonFortnox = JSON.parse(responses[2]);
+        jsonResponse =
+          "[" +
+          JSON.stringify(jsonHubSpot1) +
+          "," +
+          JSON.stringify(jsonHubSpot2) +
+          "," +
+          JSON.stringify(jsonFortnox) +
+          "]";
+
+        requestOpenAI([jsonResponse]).then((response) => {
+          openAItext = response;
+          res.redirect("/output");
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send("Error");
+      });
   }
-
-  const hubspotContacts = {
-    method: "GET",
-    url: "https://api.hubspot.com/crm/v3/objects/contacts",
-    headers: {
-      Authorization: "Bearer " + hsAccessToken,
-      "Content-Type": "application/json",
-    },
-  };
-
-  const hubspotCompanies = {
-    method: "GET",
-    url: "https://api.hubspot.com/crm/v3/objects/companies",
-    headers: {
-      Authorization: "Bearer " + hsAccessToken,
-      "Content-Type": "application/json",
-    },
-  };
-
-  const fortnox = {
-    method: "GET",
-    url: "https://api.fortnox.se/3/companyinformation",
-    headers: {
-      Authorization: "Bearer " + fnAccessToken,
-    },
-  };
-
-  Promise.all([
-    requestPromise(hubspotContacts),
-    requestPromise(hubspotCompanies),
-    requestPromise(fortnox),
-  ])
-    .then((responses) => {
-      var jsonHubSpot1 = JSON.parse(responses[0]).results;
-      var jsonHubSpot2 = JSON.parse(responses[1]).results;
-      var jsonFortnox = JSON.parse(responses[2]);
-      jsonResponse = '[' + JSON.stringify(jsonHubSpot1) + ',' + JSON.stringify(jsonHubSpot2) + ',' + JSON.stringify(jsonFortnox) + ']'
-
-      requestOpenAI([
-        jsonResponse
-      ]).then((response) => { 
-        openAItext = response;
-        res.redirect("/output") })
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).send("Error");
-    });
 });
 // Promise for OpenAI
 var openAItext = "";
@@ -109,20 +113,23 @@ function requestPromise(options) {
 }
 
 app.get("/reloadAIResponse", function (req, res) {
-  Promise.all([
-    requestOpenAI([jsonResponse]),
-  ])
-  .then((response) => {
-    openAItext = response; 
-    res.render("pages/output", {
-      dataInfo: openAItext,
-      responses: jsonResponse
-    });
-  })
-  .catch((error) => {
-    console.error(error);
-    res.status(500).send("Error");
-  });
+  if (Date.now() - hsTimer > resetMs || Date.now() - fnTimer > resetMs) {
+    fnAuthCode = fnAccessToken = hsAuthCode = hsAccessToken = null;
+    res.redirect("/authenticate");
+  } else {
+    Promise.all([requestOpenAI([jsonResponse])])
+      .then((response) => {
+        openAItext = response;
+        res.render("pages/output", {
+          dataInfo: openAItext,
+          responses: jsonResponse,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send("Error");
+      });
+  }
 });
 
 var fnAuthCode, fnAccessToken, fnTimer;
