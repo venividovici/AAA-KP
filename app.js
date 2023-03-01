@@ -33,8 +33,8 @@ app.get("/output", function (req, res) {
     });
 });
 
-
 //Loading function
+//TODO: this function fetches all the data and calls on the AI, it can be named better
 var jsonResponse = "";
 var openAItext = "";
 app.get("/loading", function (req, res) {
@@ -166,17 +166,18 @@ app.get("/fn-callback", function (req, res) {
   res.redirect("/authenticate");
 });
 
-app.get("/fn-oauth", (req, res) => 
+app.get("/fn-oauth", (req, res) =>
   res.redirect(
-    "https://apps.fortnox.se/oauth-v1/auth"+
-    "?client_id=22Fp35NiBGUD"+
-    "&redirect_uri=http://localhost:3000/fn-callback"+
-    "&scope=companyinformation"+
-    "&state=somestate"+
-    "&access_type=offline"+
-    "&response_type=code"+
-    "&account_type=service"
-  ));
+    "https://apps.fortnox.se/oauth-v1/auth" +
+      "?client_id=22Fp35NiBGUD" +
+      "&redirect_uri=http://localhost:3000/fn-callback" +
+      "&scope=companyinformation" +
+      "&state=somestate" +
+      "&access_type=offline" +
+      "&response_type=code" +
+      "&account_type=service"
+  )
+);
 
 //Hubspot callback (exchange code for token)
 var hsAuthCode, hsAccessToken, hsTimer;
@@ -225,4 +226,6 @@ app.get("/hs-oauth", (req, res) => {
 });
 
 // Start server on port 3000
-app.listen(3000, (req, res) => console.log("Server started at http://localhost:3000"));
+app.listen(3000, (req, res) =>
+  console.log("Server started at http://localhost:3000")
+);
