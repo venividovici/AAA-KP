@@ -215,12 +215,8 @@ textarea {
 }
 
 i{
-<<<<<<< Updated upstream
   color: rgb(255, 255, 255);
 }
-
-
-
 
 #progress {
   position: relative;
@@ -275,11 +271,6 @@ i{
   border-color: lightgray;
   background-color: rgb(58, 114, 154);
   color: #fff;
-}
-
-
-=======
-  color: white;
 }
 
 /* LOADING BLUR */
@@ -347,4 +338,3 @@ i{
     transform: translate(24px, 0);
   }
 }
->>>>>>> Stashed changes

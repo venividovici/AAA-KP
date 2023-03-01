@@ -5,7 +5,6 @@ function onClickToOutput() {
   location.href = "/loading";
 }
 
-<<<<<<< Updated upstream
 function reload(){
   var spinner = document.createElement('i')
   spinner.className = "fa fa-refresh fa-spin"
@@ -15,11 +14,6 @@ function reload(){
 function downloadFile(jsonContent){
   var blob = new Blob([jsonContent], {type: "application/json"});
   var fileLink = document.createElement('a');
-=======
-function downloadFile(jsonContent) {
-  var blob = new Blob([jsonContent], { type: "application/json" });
-  var fileLink = document.createElement("a");
->>>>>>> Stashed changes
   fileLink.href = window.URL.createObjectURL(blob);
   const date = new Date();
   fileLink.download =
