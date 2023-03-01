@@ -29,7 +29,14 @@
 		<button onclick="onClickToOutput()" type="button" id="next" <%= (isFnEnabled || isHsEnabled) ? 'disabled' : '' %>><span>Nästa</span></button>
 
 	<footer>
-
+		<div id="progress">
+            <div id="progress-bar"></div>
+            <ul id="progress-num">
+              <li class="step">1</li>
+              <li class="step active">2</li>
+              <li class="step">3</li>
+            </ul>
+          </div>
 	</footer>
 
 </body>
