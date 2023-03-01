@@ -24,8 +24,8 @@
     <div>
       <p>Här har du AI genererad data.</p>
       <textarea readonly><%= dataInfo %></textarea>
-    <button onclick="location.href='/reloadAIResponse'" type="button" id="reloadButton">
-      <i class="fa fa-refresh"></i>
+    <button onclick="location.href='/reloadAIResponse', reload()" type="button" id="reloadButton">
+      <i id='reloadIcon' class="fa fa-refresh"></i>
     </button>
     </div>
     <div id="besides">

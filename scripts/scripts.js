@@ -4,6 +4,12 @@ function onClickToOutput() {
   location.href = "/loading";
 }
 
+function reload(){
+  var spinner = document.createElement('i')
+  spinner.className = "fa fa-refresh fa-spin"
+  document.getElementById("reloadIcon").replaceWith(spinner);
+}
+
 function downloadFile(jsonContent){
   var blob = new Blob([jsonContent], {type: "application/json"});
   var fileLink = document.createElement('a');
