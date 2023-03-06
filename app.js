@@ -29,7 +29,7 @@ app.get("/output", function (req, res) {
   else
     res.render("pages/output", {
       dataInfo: openAItext,
-      responses: jsonResponse,
+      responses: JSON.stringify(jsonResponse),
     });
 });
 
@@ -76,16 +76,9 @@ app.get("/loading", function (req, res) {
         var jsonHubSpot1 = JSON.parse(responses[0]).results;
         var jsonHubSpot2 = JSON.parse(responses[1]).results;
         var jsonFortnox = JSON.parse(responses[2]);
-        jsonResponse =
-          "[" +
-          JSON.stringify(jsonHubSpot1) +
-          "," +
-          JSON.stringify(jsonHubSpot2) +
-          "," +
-          JSON.stringify(jsonFortnox) +
-          "]";
+        jsonResponse= {...jsonHubSpot1,...jsonHubSpot2,...jsonFortnox};
 
-        requestOpenAI([jsonResponse]).then((response) => {
+        requestOpenAI(jsonResponse,chunkSize=400).then((response) => {
           openAItext = response;
           res.redirect("/output");
         });
@@ -115,12 +108,12 @@ app.get("/reloadAIResponse", function (req, res) {
     fnAuthCode = fnAccessToken = hsAuthCode = hsAccessToken = null;
     res.redirect("/authenticate");
   } else {
-    Promise.all([requestOpenAI([jsonResponse])])
+    Promise.all([requestOpenAI(jsonResponse,400)])
       .then((response) => {
         openAItext = response;
         res.render("pages/output", {
           dataInfo: openAItext,
-          responses: jsonResponse,
+          responses: JSON.stringify(jsonResponse),
         });
       })
       .catch((error) => {
@@ -155,7 +148,7 @@ app.get("/fn-callback", function (req, res) {
       if (error) {
         console.error(error);
       } else {
-        console.log(body);
+        //console.log(body);
         const responseBody = JSON.parse(body);
         fnAccessToken = responseBody.access_token;
         fnTimer = Date.now();
@@ -204,7 +197,7 @@ app.get("/hs-callback", function (req, res) {
       if (error) {
         console.error(error);
       } else {
-        console.log(body);
+        //console.log(body);
         const responseBody = JSON.parse(body);
         hsAccessToken = responseBody.access_token;
         hsTimer = Date.now();
