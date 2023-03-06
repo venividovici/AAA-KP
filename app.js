@@ -4,18 +4,37 @@ const url = require("url");
 const request = require("request");
 const app = express();
 const requestOpenAI = require("./ai.js");
-const resetMs = 3599980; //access token lifespan
-
+const resetMs = 3599980; // Access token lifespan
 app.use("/images", express.static("images"));
 app.use("/scripts", express.static("scripts"));
 app.use("/files", express.static("files"));
 app.set("view engine", "ejs");
 app.use("/style", express.static("style"));
 
-//Landing page
+// GLOBAL VARIABLES
+var jsonResponse = "";
+var openAItext = "";
+var fnAuthCode, fnAccessToken, fnTimer;
+var hsAuthCode, hsAccessToken, hsTimer;
+
+const HUBSPOT_CLIENT_ID = "afd563db-c00e-4d47-b52d-d421800d6c01";
+const HUBSPOT_CLIENT_SECRET = "998b8f49-1167-4125-8961-85452c927589";
+const HUBSPOT_REDIRECT_URI = "http://localhost:3000/hs-callback";
+
+const FORTNOX_CLIENT_ID = "22Fp35NiBGUD";
+const FORTNOX_REDIRECT_URI = "http://localhost:3000/fn-callback";
+const FORTNOX_SCOPE = "companyinformation";
+const FORTNOX_STATE = "somestate";
+const FORTNOX_ACCESS_TYPE = "offline";
+const FORTNOX_RESPONSE_CODE = "code";
+const FORTNOX_ACCOUNT_TYPE = "service";
+
+
+// -----------------------------------PAGES-------------------------------------------
+// Welcome page
 app.get("/", (req, res) => res.render("pages/welcome", {}));
 
-//Authenticate page
+// Authenticate page
 app.get("/authenticate", (req, res) =>
   res.render("pages/authenticate", {
     isHsEnabled: !hsAuthCode,
@@ -23,7 +42,7 @@ app.get("/authenticate", (req, res) =>
   })
 );
 
-//Output page
+// Output page
 app.get("/output", function (req, res) {
   if (openAItext == "") res.redirect("/authenticate");
   else
@@ -33,10 +52,29 @@ app.get("/output", function (req, res) {
     });
 });
 
-//TODO: this function fetches all the data and calls on the AI, it can be named better
-var jsonResponse = "";
-var openAItext = "";
-app.get("/loading", function (req, res) {
+// Output page: Reload AI response
+app.get("/reloadAIResponse", function (req, res) {
+  if (Date.now() - hsTimer > resetMs || Date.now() - fnTimer > resetMs) {
+    fnAuthCode = fnAccessToken = hsAuthCode = hsAccessToken = null;
+    res.redirect("/authenticate");
+  } else {
+    Promise.all([requestOpenAI(jsonResponse,400)])
+      .then((response) => {
+        openAItext = response;
+        res.render("pages/output", {
+          dataInfo: openAItext,
+          responses: JSON.stringify(jsonResponse),
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send("Error");
+      });
+  }
+});
+
+// -----------------------------------API LOGIC-------------------------------------------
+app.get("/generate", function (req, res) {
   if (Date.now() - hsTimer > resetMs || Date.now() - fnTimer > resetMs) {
     fnAuthCode = fnAccessToken = hsAuthCode = hsAccessToken = null;
     res.redirect("/authenticate");
@@ -85,12 +123,11 @@ app.get("/loading", function (req, res) {
       })
       .catch((error) => {
         console.error(error);
-        res.status(500).send("Ooops :^)");
+        res.status(500).send("Error");
       });
   }
 });
 
-// Wrap the request function in a promise for easier use with Promise.all
 function requestPromise(options) {
   return new Promise((resolve, reject) => {
     request(options, (error, response, body) => {
@@ -103,28 +140,7 @@ function requestPromise(options) {
   });
 }
 
-app.get("/reloadAIResponse", function (req, res) {
-  if (Date.now() - hsTimer > resetMs || Date.now() - fnTimer > resetMs) {
-    fnAuthCode = fnAccessToken = hsAuthCode = hsAccessToken = null;
-    res.redirect("/authenticate");
-  } else {
-    Promise.all([requestOpenAI(jsonResponse,400)])
-      .then((response) => {
-        openAItext = response;
-        res.render("pages/output", {
-          dataInfo: openAItext,
-          responses: JSON.stringify(jsonResponse),
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-        res.status(500).send("Error");
-      });
-  }
-});
-
 //Fortnox callback (exchange code for token)
-var fnAuthCode, fnAccessToken, fnTimer;
 app.get("/fn-callback", function (req, res) {
   const { pathname, query } = url.parse(req.url);
   const queryParams = querystring.parse(query);
@@ -141,7 +157,7 @@ app.get("/fn-callback", function (req, res) {
       form: {
         grant_type: "authorization_code",
         code: fnAuthCode,
-        redirect_uri: "http://localhost:3000/fn-callback",
+        redirect_uri: `${FORTNOX_REDIRECT_URI}`,
       },
     };
     request(options, (error, response, body) => {
@@ -158,21 +174,21 @@ app.get("/fn-callback", function (req, res) {
   res.redirect("/authenticate");
 });
 
+// Fortnox OAuth authentication
 app.get("/fn-oauth", (req, res) =>
   res.redirect(
     "https://apps.fortnox.se/oauth-v1/auth" +
-      "?client_id=22Fp35NiBGUD" +
-      "&redirect_uri=http://localhost:3000/fn-callback" +
-      "&scope=companyinformation" +
-      "&state=somestate" +
-      "&access_type=offline" +
-      "&response_type=code" +
-      "&account_type=service"
+      `?client_id=${FORTNOX_CLIENT_ID}` +
+      `&redirect_uri=${FORTNOX_REDIRECT_URI}` +
+      `&scope=${FORTNOX_SCOPE}` +
+      `&state=${FORTNOX_STATE}` +
+      `&access_type=${FORTNOX_ACCESS_TYPE}` +
+      `&response_type=${FORTNOX_RESPONSE_CODE}` +
+      `&account_type=${FORTNOX_ACCOUNT_TYPE}`
   )
 );
 
-//Hubspot callback (exchange code for token)
-var hsAuthCode, hsAccessToken, hsTimer;
+// Hubspot callback (exchange code for token)
 app.get("/hs-callback", function (req, res) {
   const { pathname, query } = url.parse(req.url);
   const queryParams = querystring.parse(query);
@@ -187,10 +203,10 @@ app.get("/hs-callback", function (req, res) {
       },
       form: {
         grant_type: "authorization_code",
-        client_id: "afd563db-c00e-4d47-b52d-d421800d6c01",
-        client_secret: "998b8f49-1167-4125-8961-85452c927589",
+        client_id: `${HUBSPOT_CLIENT_ID}`,
+        client_secret: `${HUBSPOT_CLIENT_SECRET}`,
         code: hsAuthCode,
-        redirect_uri: "http://localhost:3000/hs-callback",
+        redirect_uri: `${HUBSPOT_REDIRECT_URI}`,
       },
     };
     request(options, (error, response, body) => {
@@ -207,13 +223,13 @@ app.get("/hs-callback", function (req, res) {
   res.redirect("/authenticate");
 });
 
-//Hubspot OAuth
+// Hubspot OAuth authentication
 app.get("/hs-oauth", (req, res) => {
   const authUrl =
     "https://app-eu1.hubspot.com/oauth/authorize" +
-    "?client_id=afd563db-c00e-4d47-b52d-d421800d6c01" +
-    "&redirect_uri=http://localhost:3000/hs-callback" +
-    "&scope=crm.objects.contacts.read%20crm.objects.companies.read";
+    `?client_id=${HUBSPOT_CLIENT_ID}` +
+    `&redirect_uri=${HUBSPOT_REDIRECT_URI}` +
+    `&scope=crm.objects.contacts.read%20crm.objects.companies.read`;
   res.redirect(authUrl);
 });
 

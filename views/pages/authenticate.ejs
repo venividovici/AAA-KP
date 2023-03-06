@@ -22,7 +22,6 @@
 	<div id="loadingBlur">
 	<main>
 		<p>Vänligen autentisera dig via tjänsterna för att gå vidare till nästa steg:</p>
-		<p id="loadingText"></p>
 		<button onclick="location.href='/fn-oauth' " type="button" id="buttonAuth" <%= isFnEnabled ? '' : 'disabled' %>>Fortnox</button>
 		<button onclick="location.href='/hs-oauth' " type="button" id="buttonAuth" <%= isHsEnabled ? '' : 'disabled' %>>HubSpot</button>
 	</main>

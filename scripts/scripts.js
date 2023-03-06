@@ -1,18 +1,17 @@
 function onClickToOutput() {
-  //document.getElementById("loadingText").innerHTML = "Laddar…";
   loadingBlur();
   document.getElementById("next").disabled = true;
-  location.href = "/loading";
+  location.href = "/generate";
 }
 
-function reload(){
+function reload() {
   var spinner = document.createElement('i')
   spinner.className = "fa fa-refresh fa-spin"
   document.getElementById("reloadIcon").replaceWith(spinner);
 }
 
-function downloadFile(jsonContent){
-  var blob = new Blob([jsonContent], {type: "application/json"});
+function downloadFile(jsonContent) {
+  var blob = new Blob([jsonContent], { type: "application/json" });
   var fileLink = document.createElement('a');
   fileLink.href = window.URL.createObjectURL(blob);
   const date = new Date();
@@ -27,9 +26,8 @@ function downloadFile(jsonContent){
 }
 
 function loadingBlur() {
-  var element = document.getElementById("loadingBlur");
-  element.classList.add("loadingBlur");
-
-  var element2 = document.getElementById("loadingSymbol");
-  element2.classList.add("lds-ellipsis");
+  var blur = document.getElementById("loadingBlur");
+  blur.classList.add("loadingBlur");
+  var symbol = document.getElementById("loadingSymbol");
+  symbol.classList.add("lds-ellipsis");
 }
