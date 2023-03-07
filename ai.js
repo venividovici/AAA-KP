@@ -2,7 +2,7 @@ const { Configuration, OpenAIApi } = require("openai");
 
 async function requestOpenAI(jsonData, chunkSize) {
   const configuration = new Configuration({
-    apiKey: "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",
+    apiKey: process.env.OPENAI_API_KEY,
   });
   let n = 0;
   
