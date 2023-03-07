@@ -4,6 +4,7 @@ const url = require("url");
 const request = require("request");
 const app = express();
 const requestOpenAI = require("./ai.js");
+require("dotenv").config();
 const resetMs = 3599980; // Access token lifespan
 app.use("/images", express.static("images"));
 app.use("/scripts", express.static("scripts"));
@@ -17,18 +18,19 @@ var openAItext = "";
 var fnAuthCode, fnAccessToken, fnTimer;
 var hsAuthCode, hsAccessToken, hsTimer;
 
-const HUBSPOT_CLIENT_ID = "afd563db-c00e-4d47-b52d-d421800d6c01";
-const HUBSPOT_CLIENT_SECRET = "998b8f49-1167-4125-8961-85452c927589";
-const HUBSPOT_REDIRECT_URI = "http://localhost:3000/hs-callback";
+const HUBSPOT_CLIENT_ID = process.env.HUBSPOT_CLIENT_ID;
+const HUBSPOT_CLIENT_SECRET = process.env.HUBSPOT_CLIENT_SECRET;
+const HUBSPOT_REDIRECT_URI = process.env.HUBSPOT_REDIRECT_URI;
+const HUBSPOT_SCOPE = process.env.HUBSPOT_SCOPE;
 
-const FORTNOX_CLIENT_ID = "22Fp35NiBGUD";
-const FORTNOX_REDIRECT_URI = "http://localhost:3000/fn-callback";
-const FORTNOX_SCOPE = "companyinformation";
-const FORTNOX_STATE = "somestate";
-const FORTNOX_ACCESS_TYPE = "offline";
-const FORTNOX_RESPONSE_CODE = "code";
-const FORTNOX_ACCOUNT_TYPE = "service";
-
+const FORTNOX_CLIENT_ID = process.env.FORTNOX_CLIENT_ID;
+const FORTNOX_CREDENTIALS = process.env.FORTNOX_CREDENTIALS;
+const FORTNOX_REDIRECT_URI = process.env.FORTNOX_REDIRECT_URI;
+const FORTNOX_SCOPE = process.env.FORTNOX_SCOPE;
+const FORTNOX_STATE = process.env.FORTNOX_STATE;
+const FORTNOX_ACCESS_TYPE = process.env.FORTNOX_ACCESS_TYPE;
+const FORTNOX_RESPONSE_CODE = process.env.FORTNOX_RESPONSE_CODE;
+const FORTNOX_ACCOUNT_TYPE = process.env.FORTNOX_ACCOUNT_TYPE;
 
 // -----------------------------------PAGES-------------------------------------------
 // Welcome page
@@ -58,7 +60,7 @@ app.get("/reloadAIResponse", function (req, res) {
     fnAuthCode = fnAccessToken = hsAuthCode = hsAccessToken = null;
     res.redirect("/authenticate");
   } else {
-    Promise.all([requestOpenAI(jsonResponse,400)])
+    Promise.all([requestOpenAI(jsonResponse, 400)])
       .then((response) => {
         openAItext = response;
         res.render("pages/output", {
@@ -114,9 +116,9 @@ app.get("/generate", function (req, res) {
         var jsonHubSpot1 = JSON.parse(responses[0]).results;
         var jsonHubSpot2 = JSON.parse(responses[1]).results;
         var jsonFortnox = JSON.parse(responses[2]);
-        jsonResponse= {...jsonHubSpot1,...jsonHubSpot2,...jsonFortnox};
+        jsonResponse = { ...jsonHubSpot1, ...jsonHubSpot2, ...jsonFortnox };
 
-        requestOpenAI(jsonResponse,chunkSize=400).then((response) => {
+        requestOpenAI(jsonResponse, (chunkSize = 400)).then((response) => {
           openAItext = response;
           res.redirect("/output");
         });
@@ -152,7 +154,7 @@ app.get("/fn-callback", function (req, res) {
       url: "https://apps.fortnox.se/oauth-v1/token",
       headers: {
         "Content-Type": "application/x-www-urlencoded",
-        Authorization: "Basic MjJGcDM1TmlCR1VEOnBtUkhkSmRsY2w=",
+        Authorization: `Basic ${FORTNOX_CREDENTIALS}`,
       },
       form: {
         grant_type: "authorization_code",
@@ -213,7 +215,6 @@ app.get("/hs-callback", function (req, res) {
       if (error) {
         console.error(error);
       } else {
-        //console.log(body);
         const responseBody = JSON.parse(body);
         hsAccessToken = responseBody.access_token;
         hsTimer = Date.now();
@@ -229,7 +230,7 @@ app.get("/hs-oauth", (req, res) => {
     "https://app-eu1.hubspot.com/oauth/authorize" +
     `?client_id=${HUBSPOT_CLIENT_ID}` +
     `&redirect_uri=${HUBSPOT_REDIRECT_URI}` +
-    `&scope=crm.objects.contacts.read%20crm.objects.companies.read`;
+    `&scope=${HUBSPOT_SCOPE}`;
   res.redirect(authUrl);
 });
 
