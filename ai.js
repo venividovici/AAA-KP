@@ -50,11 +50,11 @@ async function requestOpenAI(jsonData, chunkSize) {
 	Then we simply write out the data preprocessing result that combines old (and possibly amended)
 	preprocessed data with the newly preprocessed data chunk.
 
-	Previously processed data:
+	Previously preprocessed data:
 	unprocessed data chunk:
 	Data preprocessing result:
 
-	Previously processed data:${summarizedData}
+	Previously preprocessed data:${summarizedData}
 	unprocessed data chunk: ${dataChunks[i]}
 	Data preprocessing result:`;
 
