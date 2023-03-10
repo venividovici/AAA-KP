@@ -1,34 +1,52 @@
 const { Configuration, OpenAIApi } = require("openai");
 
-/**
- * 
- * @param {*} jsonData json data to be stringified, split and preprocessed
- * @param {*} chunkSize the number of individual characters per chunk
- * @returns 
- */
-async function requestOpenAI(jsonData, chunkSize) {
-  const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-  let n = 0;
-
-  var dataString = JSON.stringify(jsonData);
-  var dataChunks = [];
-
-  for (let x = 0; x < dataString.length; x += chunkSize) {
-    dataChunks[n++] = dataString.substring(x, x + chunkSize);
-    console.log(`\n\n#${n}:${dataChunks[n - 1]}`);
+class AIRequestHandler {
+  constructor() {
+    this.chunkIndex=0;
+    this.listeners=[];
   }
 
-  const openai = new OpenAIApi(configuration);
-  try {
-    var summarizedData = "";
-    var temp;
-    console.log("\n\n\n");
+  addListener(listener){
+    this.listeners.push(listener);
+  }
 
-    let chunkCount = dataChunks.length;
+  indexChanged(){
+    let x = this.chunkIndex;
+    listeners.forEach(listener => {
+        listener.indexChanged(x);
+    });
+  }
 
-    let preprocessing_prompt = `
+  /**
+   *
+   * @param {*} jsonData json data to be stringified, split and preprocessed
+   * @param {*} chunkSize the number of individual characters per chunk
+   * @returns
+   */
+  async requestOpenAI(jsonData, chunkSize) {
+    const configuration = new Configuration({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    this.chunkIndex = 0;
+
+    var dataString = JSON.stringify(jsonData);
+    var dataChunks = [];
+
+    for (let x = 0; x < dataString.length; x += chunkSize) {
+      dataChunks[this.chunkIndex++] = dataString.substring(x, x + chunkSize);
+      console.log(`\n\n#${this.chunkIndex}:${dataChunks[this.chunkIndex - 1]}`);
+      this.indexChanged();
+    }
+
+    const openai = new OpenAIApi(configuration);
+    try {
+      var summarizedData = "";
+      var temp;
+      console.log("\n\n\n");
+
+      let chunkCount = dataChunks.length;
+
+      let preprocessing_prompt = `
     We are using GPT-3 to analyze large amounts of data from a business development 
     consulting firm. The data includes information about invoices (from their ERP 
     system) and clients (from their CRM system). Our goal is to generate 
@@ -62,7 +80,7 @@ async function requestOpenAI(jsonData, chunkSize) {
     
     Data preprocessing result:`;
 
-    let analysis_prompt = `
+      let analysis_prompt = `
     Given the preprocessed data, generate insights about the business development 
     consulting firm's clients and invoices:
 
@@ -82,22 +100,23 @@ async function requestOpenAI(jsonData, chunkSize) {
     Preprocessed data: ${summarizedData}
     Business Intelligence Report:`;
 
-    for (let i = 0; i < chunkCount; i++) {
-      console.log(`batch ${i + 1} is being processed...\n`);
-      const completion = await openai.createCompletion({
-        model: "text-davinci-003",
-        max_tokens: 1500,
-        prompt: i == chunkCount - 1 ? analysis_prompt : preprocessing_prompt,
-      });
-      summarizedData = temp + completion.data.choices[0].text;
-      temp = completion.data.choices[0].text;
-    }
+      for (let i = 0; i < chunkCount; i++) {
+        console.log(`batch ${i + 1} is being processed...\n`);
+        const completion = await openai.createCompletion({
+          model: "text-davinci-003",
+          max_tokens: 1500,
+          prompt: i == chunkCount - 1 ? analysis_prompt : preprocessing_prompt,
+        });
+        summarizedData = temp + completion.data.choices[0].text;
+        temp = completion.data.choices[0].text;
+      }
 
-    console.log(summarizedData);
-    return summarizedData;
-  } catch (error) {
-    console.log(error.response);
+      console.log(summarizedData);
+      return summarizedData;
+    } catch (error) {
+      console.log(error.response);
+    }
   }
 }
 
-module.exports = requestOpenAI;
+module.exports = AIRequestHandler

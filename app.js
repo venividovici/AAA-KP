@@ -3,7 +3,7 @@ const querystring = require("querystring");
 const url = require("url");
 const request = require("request");
 const app = express();
-const requestOpenAI = require("./ai.js");
+const openai = require("./ai.js");
 require("dotenv").config();
 const resetMs = 3599980; // Access token lifespan
 app.use("/images", express.static("images"));
@@ -17,6 +17,7 @@ var jsonResponse = "";
 var openAItext = "";
 var fnAuthCode, fnAccessToken, fnTimer;
 var hsAuthCode, hsAccessToken, hsTimer;
+const requestHandler = new openai();
 
 const HUBSPOT_CLIENT_ID = process.env.HUBSPOT_CLIENT_ID;
 const HUBSPOT_CLIENT_SECRET = process.env.HUBSPOT_CLIENT_SECRET;
@@ -32,6 +33,22 @@ const FORTNOX_ACCESS_TYPE = process.env.FORTNOX_ACCESS_TYPE;
 const FORTNOX_RESPONSE_CODE = process.env.FORTNOX_RESPONSE_CODE;
 const FORTNOX_ACCOUNT_TYPE = process.env.FORTNOX_ACCOUNT_TYPE;
 
+//--------------------------------LISTENER CLASS--------------------------------------
+class AIListener{
+  constructor(){
+    this.index=0;
+    requestHandler.addListener(this);
+  }
+
+  get index(){
+    return this.index;
+  }
+  
+  indexChanged(i){
+    this.index=i;
+    //TODO: code to change progress bar goes here
+  }
+}
 // -----------------------------------PAGES-------------------------------------------
 // Welcome page
 app.get("/", (req, res) => res.render("pages/welcome", {}));
@@ -60,7 +77,7 @@ app.get("/reloadAIResponse", function (req, res) {
     fnAuthCode = fnAccessToken = hsAuthCode = hsAccessToken = null;
     res.redirect("/authenticate");
   } else {
-    Promise.all([requestOpenAI(jsonResponse, 400)])
+    Promise.all([requestHandler.requestOpenAI(jsonResponse, 400)])
       .then((response) => {
         openAItext = response;
         res.render("pages/output", {
@@ -118,7 +135,7 @@ app.get("/generate", function (req, res) {
         var jsonFortnox = JSON.parse(responses[2]);
         jsonResponse = { ...jsonHubSpot1, ...jsonHubSpot2, ...jsonFortnox };
 
-        requestOpenAI(jsonResponse, (chunkSize = 400)).then((response) => {
+        requestHandler.requestOpenAI(jsonResponse, (chunkSize = 400)).then((response) => {
           openAItext = response;
           res.redirect("/output");
         });
