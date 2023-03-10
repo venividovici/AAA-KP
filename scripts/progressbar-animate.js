@@ -1,26 +1,26 @@
-var svgCircle = document.querySelectorAll(".foreground-circle svg circle");
-
-var numberInsideCircle = document.getElementById("number-inside-circle");
-
-// Get the stroke-dasharray value from CSS
-var svgStrokeDashArray = parseInt(
-  window
-    .getComputedStyle(svgCircle[0])
-    .getPropertyValue("stroke-dasharray")
-    .replace("px", "")
-);
-
-// To animte the circle from the previous value
-var previousStrokeDashOffset = svgStrokeDashArray;
-
-// To animate the number from the previous value
-var previousValue = 0;
-
-var animationDuration = 1000;
-
 // Call this method and pass any value to start the animation
 // The 'value' should be in between 0 to 100
 function animateCircle(value) {
+  var svgCircle = document.querySelectorAll(".foreground-circle svg circle");
+
+  var numberInsideCircle = document.getElementById("number-inside-circle");
+
+  // Get the stroke-dasharray value from CSS
+  var svgStrokeDashArray = parseInt(
+    window
+      .getComputedStyle(svgCircle[0])
+      .getPropertyValue("stroke-dasharray")
+      .replace("px", "")
+  );
+
+  // To animte the circle from the previous value
+  var previousStrokeDashOffset = svgStrokeDashArray;
+
+  // To animate the number from the previous value
+  var previousValue = 0;
+
+  var animationDuration = 1000;
+
   var offsetValue = Math.floor(((100 - value) * svgStrokeDashArray) / 100);
 
   // This is to animate the circle
@@ -79,7 +79,7 @@ function animateCircle(value) {
   }
 }
 
-module.exports = animateCircle
+module.exports = animateCircle;
 
 /* function animateLoading() {
   var randomValue = Math.floor(Math.random() * 101);

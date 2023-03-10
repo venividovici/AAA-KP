@@ -20,7 +20,6 @@ var openAItext = "";
 var fnAuthCode, fnAccessToken, fnTimer;
 var hsAuthCode, hsAccessToken, hsTimer;
 const requestHandler = new openai();
-const aiListener = new AIListener();
 
 const HUBSPOT_CLIENT_ID = process.env.HUBSPOT_CLIENT_ID;
 const HUBSPOT_CLIENT_SECRET = process.env.HUBSPOT_CLIENT_SECRET;
@@ -53,6 +52,8 @@ class AIListener{
     this.total = total
   }
 }
+const aiListener = new AIListener();
+
 // -----------------------------------PAGES-------------------------------------------
 // Welcome page
 app.get("/", (req, res) => res.render("pages/welcome", {}));
