@@ -1,6 +1,5 @@
 const { Configuration, OpenAIApi } = require("openai");
 
-
 /**
  * 
  * @param {*} jsonData json data to be stringified, split and preprocessed
@@ -38,17 +37,13 @@ async function requestOpenAI(jsonData, chunkSize) {
 
     However, due to the 4000-token limit of GPT-3, we need to preprocess the data in 
     chunks to make it more manageable. To do this, we will iterate through the 
-    dataset in smaller portions and preprocess each chunk before feeding it into the 
-    final prompt.
+    dataset in smaller portions, feeding them into GPT-3 that will preprocess each 
+    chunk before feeding it into the final prompt as input data.
     
     For each iteration, we will receive an unsorted, merged dataset that contains 
-    both invoice data and client data. Our first step will be to preprocess the data 
-    by summarizing it into its essential components, while retaining as much 
-    meaningful information as possible.
-    
-    To achieve this, we will use clustering and dimensionality reduction techniques 
-    to group similar data points together and eliminate redundant information. We will 
-    also look for trends and patterns in the data to identify key insights that can 
+    both invoice data and client data. Our first step will be to preprocess the data
+    using GPT-3 by summarizing it into its essential components, while retaining as 
+    much meaningful information as possible. We will also look for trends and patterns in the data to identify key insights that can 
     be used in the final prompt.
     
     Once we have preprocessed the data, we will compare it to previous iterations to 
