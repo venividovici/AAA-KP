@@ -4,6 +4,8 @@ const url = require("url");
 const request = require("request");
 const app = express();
 const openai = require("./ai.js");
+const animateCircle = require("./scripts/progressbar-animate.js");
+//const progressBar = require("./scripts/progressbar-animate");
 require("dotenv").config();
 const resetMs = 3599980; // Access token lifespan
 app.use("/images", express.static("images"));
@@ -18,6 +20,7 @@ var openAItext = "";
 var fnAuthCode, fnAccessToken, fnTimer;
 var hsAuthCode, hsAccessToken, hsTimer;
 const requestHandler = new openai();
+const aiListener = new AIListener();
 
 const HUBSPOT_CLIENT_ID = process.env.HUBSPOT_CLIENT_ID;
 const HUBSPOT_CLIENT_SECRET = process.env.HUBSPOT_CLIENT_SECRET;
@@ -33,20 +36,21 @@ const FORTNOX_ACCESS_TYPE = process.env.FORTNOX_ACCESS_TYPE;
 const FORTNOX_RESPONSE_CODE = process.env.FORTNOX_RESPONSE_CODE;
 const FORTNOX_ACCOUNT_TYPE = process.env.FORTNOX_ACCOUNT_TYPE;
 
-//--------------------------------LISTENER CLASS--------------------------------------
+// -------------------------------LISTENER CLASS--------------------------------------
 class AIListener{
   constructor(){
-    this.index=0;
+    this.index = 0
+    this.total = 0
     requestHandler.addListener(this);
   }
 
-  get index(){
-    return this.index;
-  }
-  
-  indexChanged(i){
-    this.index=i;
-    //TODO: code to change progress bar goes here
+  onOutputLoad(){
+      animateCircle(this.index);
+    }
+
+  indexChanged(current,total){
+    this.index = current;
+    this.total = total
   }
 }
 // -----------------------------------PAGES-------------------------------------------
@@ -56,6 +60,7 @@ app.get("/", (req, res) => res.render("pages/welcome", {}));
 // Authenticate page
 app.get("/authenticate", (req, res) =>
   res.render("pages/authenticate", {
+    aiListener: aiListener,
     isHsEnabled: !hsAuthCode,
     isFnEnabled: !fnAuthCode,
   })

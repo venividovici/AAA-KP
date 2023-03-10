@@ -56,7 +56,7 @@
 		<button onclick="location.href='/fn-oauth' " type="button" id="buttonAuth" <%= isFnEnabled ? '' : 'disabled' %>>Fortnox</button>
 		<button onclick="location.href='/hs-oauth' " type="button" id="buttonAuth" <%= isHsEnabled ? '' : 'disabled' %>>HubSpot</button>
 	</main>
-		<button onclick="onClickToOutput()" type="button" id="next" <%= (isFnEnabled || isHsEnabled) ? 'disabled' : '' %>><span>Nästa</span></button>
+		<button onclick= type=<%=aiListener.onOutputLoad()> id="next" <%= (isFnEnabled || isHsEnabled) ? 'disabled' : '' %>><span>Nästa</span></button>
 
 	<footer>
 		<div id="progress">

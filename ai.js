@@ -3,6 +3,7 @@ const { Configuration, OpenAIApi } = require("openai");
 class AIRequestHandler {
   constructor() {
     this.chunkIndex=0;
+    this.chunkCount=0;
     this.listeners=[];
   }
 
@@ -13,7 +14,7 @@ class AIRequestHandler {
   indexChanged(){
     let x = this.chunkIndex;
     listeners.forEach(listener => {
-        listener.indexChanged(x);
+        listener.indexChanged(x, chunkCount);
     });
   }
 
@@ -44,7 +45,7 @@ class AIRequestHandler {
       var temp;
       console.log("\n\n\n");
 
-      let chunkCount = dataChunks.length;
+      chunkCount = dataChunks.length;
 
       let preprocessing_prompt = `
     We are using GPT-3 to analyze large amounts of data from a business development 
