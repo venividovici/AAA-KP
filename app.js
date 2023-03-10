@@ -60,7 +60,7 @@ app.get("/reloadAIResponse", function (req, res) {
     fnAuthCode = fnAccessToken = hsAuthCode = hsAccessToken = null;
     res.redirect("/authenticate");
   } else {
-    Promise.all([requestOpenAI(jsonResponse, 400)])
+    Promise.all([requestOpenAI(jsonResponse, 1000)])
       .then((response) => {
         openAItext = response;
         res.render("pages/output", {
@@ -99,6 +99,15 @@ app.get("/generate", function (req, res) {
       },
     };
 
+    const hubspotDeals = {
+      method: "GET",
+      url: "https://api.hubspot.com/crm/v3/objects/deals",
+      headers: {
+        Authorization: "Bearer " + hsAccessToken,
+        "Content-Type": "application/json",
+      },
+    };
+
     const fortnox = {
       method: "GET",
       url: "https://api.fortnox.se/3/companyinformation",
@@ -110,15 +119,17 @@ app.get("/generate", function (req, res) {
     Promise.all([
       requestPromise(hubspotContacts),
       requestPromise(hubspotCompanies),
+      requestPromise(hubspotDeals),
       requestPromise(fortnox),
     ])
       .then((responses) => {
         var jsonHubSpot1 = JSON.parse(responses[0]).results;
         var jsonHubSpot2 = JSON.parse(responses[1]).results;
-        var jsonFortnox = JSON.parse(responses[2]);
-        jsonResponse = { ...jsonHubSpot1, ...jsonHubSpot2, ...jsonFortnox };
+        var jsonHubSpot3 = JSON.parse(responses[2]).results;
+        var jsonFortnox = JSON.parse(responses[3]);
+        jsonResponse = { ...jsonHubSpot1, ...jsonHubSpot2, ...jsonHubSpot3, ...jsonFortnox };
 
-        requestOpenAI(jsonResponse, (chunkSize = 400)).then((response) => {
+        requestOpenAI(jsonResponse, (chunkSize = 1000)).then((response) => {
           openAItext = response;
           res.redirect("/output");
         });
