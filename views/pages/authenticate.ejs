@@ -24,6 +24,10 @@
 		<p>Vänligen autentisera dig via tjänsterna för att gå vidare till nästa steg:</p>
 		<button onclick="location.href='/fn-oauth' " type="button" id="buttonAuth" <%= isFnEnabled ? '' : 'disabled' %>>Fortnox</button>
 		<button onclick="location.href='/hs-oauth' " type="button" id="buttonAuth" <%= isHsEnabled ? '' : 'disabled' %>>HubSpot</button>
+
+		<p>Du kan även ladda upp kompletterande data:</p>
+		<input hidden type="file" id="fileInput">
+		<button onclick="uploadFile()" type="button" id="buttonAuth">Ladda upp</button>
 	</main>
 		<button onclick="onClickToOutput()" type="button" id="next" <%= (isFnEnabled || isHsEnabled) ? 'disabled' : '' %>><span>Nästa</span></button>
 	</div>

@@ -4,15 +4,24 @@ function onClickToOutput() {
   location.href = "/generate";
 }
 
+function uploadFile() {
+  document.getElementById("fileInput").click();
+  var fileElement = document.getElementById("fileInput");
+
+  
+
+  
+}
+
 function reload() {
-  var spinner = document.createElement('i')
-  spinner.className = "fa fa-refresh fa-spin"
+  var spinner = document.createElement("i");
+  spinner.className = "fa fa-refresh fa-spin";
   document.getElementById("reloadIcon").replaceWith(spinner);
 }
 
 function downloadFile(jsonContent) {
   var blob = new Blob([jsonContent], { type: "application/json" });
-  var fileLink = document.createElement('a');
+  var fileLink = document.createElement("a");
   fileLink.href = window.URL.createObjectURL(blob);
   const date = new Date();
   fileLink.download =
