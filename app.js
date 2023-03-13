@@ -123,11 +123,11 @@ app.get("/generate", function (req, res) {
       requestPromise(fortnox),
     ])
       .then((responses) => {
-        var jsonHubSpot1 = JSON.parse(responses[0]).results;
-        var jsonHubSpot2 = JSON.parse(responses[1]).results;
-        var jsonHubSpot3 = JSON.parse(responses[2]).results;
-        var jsonFortnox = JSON.parse(responses[3]);
-        jsonResponse = { ...jsonHubSpot1, ...jsonHubSpot2, ...jsonHubSpot3, ...jsonFortnox };
+        var jsonHubSpot1 = JSON.stringify(JSON.parse(responses[0]).results);
+        var jsonHubSpot2 = JSON.stringify(JSON.parse(responses[1]).results);
+        var jsonHubSpot3 = JSON.stringify(JSON.parse(responses[2]).results);
+        var jsonFortnox = JSON.stringify(JSON.parse(responses[3]));
+        jsonResponse = jsonHubSpot1+jsonHubSpot2+jsonHubSpot3+jsonFortnox;
 
         requestOpenAI(jsonResponse, (chunkSize = 1000)).then((response) => {
           openAItext = response;
