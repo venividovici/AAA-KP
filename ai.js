@@ -12,7 +12,7 @@ async function requestOpenAI(jsonData, chunkSize) {
   });
   let n = 0;
 
-  var dataString = JSON.stringify(jsonData);
+  var dataString = jsonData;
   var dataChunks = [];
 
   for (var x = 0; x < dataString.length; x += chunkSize) {
