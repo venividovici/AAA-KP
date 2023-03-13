@@ -101,7 +101,7 @@ app.get("/generate", function (req, res) {
 
     const fortnox = {
       method: "GET",
-      url: "https://api.fortnox.se/3/companyinformation",
+      url: "https://api.fortnox.se/3/invoice",
       headers: {
         Authorization: "Bearer " + fnAccessToken,
       },
