@@ -15,7 +15,7 @@ async function requestOpenAI(jsonData, chunkSize) {
   var dataString = JSON.stringify(jsonData);
   var dataChunks = [];
 
-  for (let x = 0; x < dataString.length; x += chunkSize) {
+  for (var x = 0; x < dataString.length; x += chunkSize) {
     dataChunks[n++] = dataString.substring(x, x + chunkSize);
     console.log(`\n\n#${n}:${dataChunks[n - 1]}`);
   }
@@ -26,9 +26,9 @@ async function requestOpenAI(jsonData, chunkSize) {
     var temp;
     console.log("\n\n\n");
 
-    let chunkCount = dataChunks.length;
+    var chunkCount = dataChunks.length;
 
-    let preprocessing_prompt = `
+    var preprocessing_prompt = `
     We are using GPT-3 to analyze large amounts of data from a business development 
     consulting firm. The data includes information about invoices (from their ERP 
     system) and clients (from their CRM system). Our goal is to generate 
@@ -62,7 +62,7 @@ async function requestOpenAI(jsonData, chunkSize) {
     
     Data preprocessing result:`;
 
-    let analysis_prompt = `
+    var analysis_prompt = `
     Given the preprocessed data, generate insights about the business development 
     consulting firm's clients and invoices:
 
@@ -82,7 +82,7 @@ async function requestOpenAI(jsonData, chunkSize) {
     Preprocessed data: ${summarizedData}
     Business Intelligence Report:`;
 
-    for (let i = 0; i < chunkCount; i++) {
+    for (var i = 0; i < chunkCount; i++) {
       console.log(`batch ${i + 1} is being processed...\n`);
       const completion = await openai.createCompletion({
         model: "text-davinci-003",

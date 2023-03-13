@@ -60,7 +60,7 @@ app.get("/reloadAIResponse", function (req, res) {
     fnAuthCode = fnAccessToken = hsAuthCode = hsAccessToken = null;
     res.redirect("/authenticate");
   } else {
-    Promise.all([requestOpenAI(jsonResponse, 400)])
+    Promise.all([requestOpenAI(jsonResponse, 1000)])
       .then((response) => {
         openAItext = response;
         res.render("pages/output", {
@@ -118,7 +118,7 @@ app.get("/generate", function (req, res) {
         var jsonFortnox = JSON.parse(responses[2]);
         jsonResponse = { ...jsonHubSpot1, ...jsonHubSpot2, ...jsonFortnox };
 
-        requestOpenAI(jsonResponse, (chunkSize = 400)).then((response) => {
+        requestOpenAI(jsonResponse, (chunkSize = 1000)).then((response) => {
           openAItext = response;
           res.redirect("/output");
         });
