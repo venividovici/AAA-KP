@@ -47,7 +47,8 @@ app.get("/authenticate", (req, res) =>
 
 // Output page
 app.get("/output", function (req, res) {
-  if (openAItext == "") res.redirect("/authenticate");
+  console.log(hsAccessToken); // TA BORT
+  if (false) res.redirect("/authenticate"); //false ska vara: openAItext == ""
   else
     res.render("pages/output", {
       dataInfo: openAItext,
@@ -82,15 +83,6 @@ app.get("/generate", function (req, res) {
     fnAuthCode = fnAccessToken = hsAuthCode = hsAccessToken = null;
     res.redirect("/authenticate");
   } else {
-    const hubspotContacts = {
-      method: "GET",
-      url: "https://api.hubspot.com/crm/v3/objects/contacts",
-      headers: {
-        Authorization: "Bearer " + hsAccessToken,
-        "Content-Type": "application/json",
-      },
-    };
-
     const hubspotCompanies = {
       method: "GET",
       url: "https://api.hubspot.com/crm/v3/objects/companies",
@@ -102,7 +94,7 @@ app.get("/generate", function (req, res) {
 
     const hubspotDeals = {
       method: "GET",
-      url: "https://api.hubspot.com/crm/v3/objects/deals",
+      url: "https://api.hubspot.com/crm/v3/objects/deals/properties",
       headers: {
         Authorization: "Bearer " + hsAccessToken,
         "Content-Type": "application/json",
@@ -118,22 +110,23 @@ app.get("/generate", function (req, res) {
     };
 
     Promise.all([
-      requestPromise(hubspotContacts),
       requestPromise(hubspotCompanies),
       requestPromise(hubspotDeals),
       requestPromise(fortnox),
     ])
       .then((responses) => {
-        var jsonHubSpot1 = JSON.stringify(JSON.parse(responses[0]).results);
-        var jsonHubSpot2 = JSON.stringify(JSON.parse(responses[1]).results);
-        var jsonHubSpot3 = JSON.stringify(JSON.parse(responses[2]).results);
-        var jsonFortnox = JSON.stringify(JSON.parse(responses[3]));
-        jsonResponse = '[' + jsonHubSpot1+ ',' +jsonHubSpot2+ ',' +jsonHubSpot3+ ',' + jsonFortnox + ']';
+        var jsonHubSpot2 = JSON.stringify(JSON.parse(responses[0]).results);
+        var jsonHubSpot3 = JSON.stringify(JSON.parse(responses[1]).results);
+        var jsonFortnox = JSON.stringify(JSON.parse(responses[2]));
+        jsonResponse = '[' +jsonHubSpot2+ ',' +jsonHubSpot3+ ',' + jsonFortnox + ']';
 
-        requestOpenAI(jsonResponse, (chunkSize = 1000)).then((response) => {
+        // TODO: denna ska bort sen när vi tar bort utkommenteringen av metoden nedan 
+        res.redirect("/output");
+
+       /* requestOpenAI(jsonResponse, (chunkSize = 1000)).then((response) => {
           openAItext = response;
           res.redirect("/output");
-        });
+        });*/
       })
       .catch((error) => {
         console.error(error);
