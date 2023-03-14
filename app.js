@@ -22,6 +22,7 @@ const HUBSPOT_CLIENT_ID = process.env.HUBSPOT_CLIENT_ID;
 const HUBSPOT_CLIENT_SECRET = process.env.HUBSPOT_CLIENT_SECRET;
 const HUBSPOT_REDIRECT_URI = process.env.HUBSPOT_REDIRECT_URI;
 const HUBSPOT_SCOPE = process.env.HUBSPOT_SCOPE;
+const HUBSPOT_ENDPOINT_DEALS = process.env.HUBSPOT_ENDPOINT_DEALS;
 
 const FORTNOX_CLIENT_ID = process.env.FORTNOX_CLIENT_ID;
 const FORTNOX_CREDENTIALS = process.env.FORTNOX_CREDENTIALS;
@@ -94,7 +95,7 @@ app.get("/generate", function (req, res) {
 
     const hubspotDeals = {
       method: "GET",
-      url: "https://api.hubspot.com/crm/v3/objects/deals/properties",
+      url: `https://api.hubspot.com/crm/v3/${HUBSPOT_ENDPOINT_DEALS}`,
       headers: {
         Authorization: "Bearer " + hsAccessToken,
         "Content-Type": "application/json",
