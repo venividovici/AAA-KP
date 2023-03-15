@@ -49,7 +49,7 @@ app.get("/authenticate", (req, res) =>
 
 // Output page
 app.get("/output", function (req, res) {
-  if (false);//(openAItext == "") res.redirect("/authenticate");
+  if (openAItext == "") res.redirect("/authenticate");
   else
     res.render("pages/output", {
       dataInfo: openAItext,
@@ -115,12 +115,11 @@ app.get("/generate", function (req, res) {
         var jsonHubSpot2 = JSON.stringify(JSON.parse(responses[1]).results);
         var jsonFortnox = JSON.stringify(JSON.parse(responses[2]));
         jsonResponse = '['+ jsonHubSpot1+ ',' +jsonHubSpot2+ ',' + jsonFortnox + ']';
-        res.redirect("/output");
 
-        // requestOpenAI(jsonResponse, (chunkSize = 1000)).then((response) => {
-        //   openAItext = response;
-        //   res.redirect("/output");
-        // });
+        requestOpenAI(jsonResponse, (chunkSize = 1000)).then((response) => {
+          openAItext = response;
+          res.redirect("/output");
+        });
       })
       .catch((error) => {
         console.error(error);
