@@ -77,51 +77,42 @@ app.get("/reloadAIResponse", function (req, res) {
 });
 
 // -----------------------------------API LOGIC-------------------------------------------
+
+function apiRequest(endpoint, token) {
+  return {
+    method: "GET",
+    url: `${token==hsAccessToken?
+      'https://api.hubspot.com/crm/v3/objects/':'https://api.fortnox.se/3/'}${endpoint}`,
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/json",
+    },
+  };
+}
+
+function requestPromise(options) {
+  return new Promise((resolve, reject) => {
+    request(options, (error, response, body) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(body);
+      }
+    });
+  });
+}
+
 app.get("/generate", function (req, res) {
   if (Date.now() - hsTimer > resetMs || Date.now() - fnTimer > resetMs) {
     fnAuthCode = fnAccessToken = hsAuthCode = hsAccessToken = null;
     res.redirect("/authenticate");
   } else {
-    const hubspotContacts = {
-      method: "GET",
-      url: "https://api.hubspot.com/crm/v3/objects/contacts",
-      headers: {
-        Authorization: "Bearer " + hsAccessToken,
-        "Content-Type": "application/json",
-      },
-    };
-
-    const hubspotCompanies = {
-      method: "GET",
-      url: "https://api.hubspot.com/crm/v3/objects/companies",
-      headers: {
-        Authorization: "Bearer " + hsAccessToken,
-        "Content-Type": "application/json",
-      },
-    };
-
-    const hubspotDeals = {
-      method: "GET",
-      url: "https://api.hubspot.com/crm/v3/objects/deals",
-      headers: {
-        Authorization: "Bearer " + hsAccessToken,
-        "Content-Type": "application/json",
-      },
-    };
-
-    const fortnox = {
-      method: "GET",
-      url: `https://api.fortnox.se/3/${FORTNOX_ENDPOINT}`,
-      headers: {
-        Authorization: "Bearer " + fnAccessToken,
-      },
-    };
 
     Promise.all([
-      requestPromise(hubspotContacts),
-      requestPromise(hubspotCompanies),
-      requestPromise(hubspotDeals),
-      requestPromise(fortnox),
+      requestPromise(apiRequest('contacts',hsAccessToken)),
+      requestPromise(apiRequest('companies',hsAccessToken)),
+      requestPromise(apiRequest('deals',hsAccessToken)),
+      requestPromise(apiRequest(FORTNOX_ENDPOINT,fnAccessToken)),
     ])
       .then((responses) => {
         var jsonHubSpot1 = JSON.stringify(JSON.parse(responses[0]).results);
@@ -141,18 +132,6 @@ app.get("/generate", function (req, res) {
       });
   }
 });
-
-function requestPromise(options) {
-  return new Promise((resolve, reject) => {
-    request(options, (error, response, body) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(body);
-      }
-    });
-  });
-}
 
 //Fortnox callback (exchange code for token)
 app.get("/fn-callback", function (req, res) {

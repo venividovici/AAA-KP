@@ -68,7 +68,7 @@ async function requestOpenAI(jsonData, chunkSize) {
 
     Identify the top clients by revenue and provide insights into their spending 
     patterns.
-    Determine the most common invoice categories and their associated revenue.
+    Determine the most common invoinewce categories and their associated revenue.
     Identify any trends or patterns in the invoice data, such as fluctuations in 
     revenue or an increase in certain types of invoices.
     Provide recommendations for increasing revenue, reducing costs, or improving 
