@@ -29,58 +29,53 @@ async function requestOpenAI(jsonData, chunkSize) {
     var chunkCount = dataChunks.length;
 
     var preprocessing_prompt = `
-    We are using GPT-3 to analyze large amounts of data from a business development 
-    consulting firm. The data includes information about invoices (from their ERP 
-    system) and clients (from their CRM system). Our goal is to generate 
-    interesting insights about the data in a final GPT-3 prompt, which will be used 
-    for writing a Power BI report.
+    Vi använder GPT-3 för att analysera stora mängder data från ett 
+     konsultföretag. Uppgifterna innehåller information om fakturor (från deras bokföringssystem)
+      och klienter (från deras CRM-system). Vårt mål är att generera
+     intressanta insikter om data i en sista GPT-3-prompt, som kommer att användas
+     för att skriva en Power BI-rapport.
 
-    However, due to the 4000-token limit of GPT-3, we need to preprocess the data in 
-    chunks to make it more manageable. To do this, we will iterate through the 
-    dataset in smaller portions, feeding them into GPT-3 that will preprocess each 
-    chunk before feeding it into the final prompt as input data.
+     Men på grund av gränsen på 4000 token för GPT-3 måste vi förbehandla data i
+     bitar för att göra det mer hanterbart. För att göra detta kommer vi att iterera igenom
+     dataset i mindre portioner, matar in dem i GPT-3 som kommer att förbehandla var och en
+     bit innan den matas in i den sista prompten som indata.
     
-    For each iteration, we will receive an unsorted, merged dataset that contains 
-    both invoice data and client data. Our first step will be to preprocess the data
-    using GPT-3 by summarizing it into its essential components, while retaining as 
-    much meaningful information as possible. We will also look for trends and patterns in the data to identify key insights that can 
-    be used in the final prompt.
+     För varje iteration kommer vi att få en osorterad, sammanslagen datauppsättning som innehåller
+     både fakturadata och kunddata. Vårt första steg blir att förbehandla data
+     använder GPT-3 genom att sammanfatta den i dess väsentliga komponenter, samtidigt som den behålls som
+     så mycket meningsfull information som möjligt. Vi kommer också att leta efter trender och mönster i data för att identifiera viktiga insikter som kan
+     användas i den sista prompten.
     
-    Once we have preprocessed the data, we will compare it to previous iterations to 
-    ensure consistency and identify any changes in trends or patterns. If necessary, 
-    we will adjust our preprocessing methods to account for these changes.
+     När vi har förbehandlat datan kommer vi att jämföra det med tidigare iterationer till
+     säkerställa konsekvens och identifiera eventuella förändringar i trender eller mönster.
     
-    Finally, we will feed the preprocessed data into the final GPT-3 prompt to 
-    generate interesting insights and analysis. The output will be used to create a 
-    Power BI report that presents the findings in a clear and concise manner.
+     Slutligen kommer vi att mata in den förbehandlade informationen i den slutliga GPT-3-prompten till
+     generera intressanta insikter och analyser. Utdata kommer att användas för att skapa en
+     Power BI-rapport som presenterar resultaten på ett tydligt och kortfattat sätt. Det är viktigt att alla relevanta variabler
+     och intressanta datapunkter är med.
     
-    Previous processed data:
-    ${summarizedData}
+     Tidigare bearbetade data:
+     ${summarizedData}
     
-    Unprocessed data chunk:
-    ${dataChunks[i]}
+     Obearbetad data:
+     ${dataChunks[i]}
     
-    Data preprocessing result:`;
-
+     Resultat från förbearbetning av data:`;
     var analysis_prompt = `
-    Given the preprocessed data, generate insights about the business development 
-    consulting firm's clients and invoices:
+    Givet den förbearbetade datan, svara med konkreta tips på hur man kan använda denna data för att skapa
+    en bra Power-BI rapport, gärna stegvis. Svaret bör vara omkring 150 ord långt. 
 
-    Identify the top clients by revenue and provide insights into their spending 
-    patterns.
-    Determine the most common invoinewce categories and their associated revenue.
-    Identify any trends or patterns in the invoice data, such as fluctuations in 
-    revenue or an increase in certain types of invoices.
-    Provide recommendations for increasing revenue, reducing costs, or improving 
-    client retention based on the analysis of the data.
+     Förslag på insikter som kan vara bra att få med i sin rapport skulle kunna vara till exempel ett
+     cirkeldiagram över de bästa kunderna efter intäkter. Ett annat exempel är att identifiera eventuella trender
+      eller mönster i fakturadata, till exempel fluktuationer i intäkter eller en ökning av vissa typer av fakturor.
+     
+     Vänligen ge detaljerade insikter för var och en av ovanstående frågor, med stöd av
+     relevanta data och exempel. Tänk på att de genererade insikterna bör vara det
+     korrekt, sammanhängande och värdefullt för konsultföretaget för affärsutveckling
+     framtida beslut. Föreslå ingenting som inte framgår i datan, det vill säga, hitta inte på någonting nytt.
 
-    Please provide detailed insights for each of the above questions, supported by 
-    relevant data and examples. Keep in mind that the generated insights should be 
-    accurate, coherent, and valuable for the business development consulting firm's 
-    future decisions.
-
-    Preprocessed data: ${summarizedData}
-    Business Intelligence Report:`;
+     Förbearbetad data: ${summarizedData}
+     Tips för skapande av en Business Intelligence-rapport:`;
 
     for (var i = 0; i < chunkCount; i++) {
       console.log(`batch ${i + 1} is being processed...\n`);
