@@ -90,7 +90,16 @@ function apiRequest(endpoint, token) {
   };
 }
 
-function requestPromise(options) {
+function requestPromise(endpoint, token){
+  const options = {
+    method: "GET",
+    url: `${token==hsAccessToken?
+      'https://api.hubspot.com/crm/v3/objects/':'https://api.fortnox.se/3/'}${endpoint}`,
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/json",
+    },
+  }
   return new Promise((resolve, reject) => {
     request(options, (error, response, body) => {
       if (error) {
