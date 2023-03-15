@@ -22,6 +22,7 @@ const HUBSPOT_CLIENT_ID = process.env.HUBSPOT_CLIENT_ID;
 const HUBSPOT_CLIENT_SECRET = process.env.HUBSPOT_CLIENT_SECRET;
 const HUBSPOT_REDIRECT_URI = process.env.HUBSPOT_REDIRECT_URI;
 const HUBSPOT_SCOPE = process.env.HUBSPOT_SCOPE;
+const HUBSPOT_ENDPOINT_DEALS = process.env.HUBSPOT_ENDPOINT_DEALS; 
 
 const FORTNOX_CLIENT_ID = process.env.FORTNOX_CLIENT_ID;
 const FORTNOX_CREDENTIALS = process.env.FORTNOX_CREDENTIALS;
@@ -104,17 +105,15 @@ app.get("/generate", function (req, res) {
   } else {
 
     Promise.all([
-      requestPromise('contacts',hsAccessToken),
       requestPromise('companies',hsAccessToken),
-      requestPromise('deals',hsAccessToken),
+      requestPromise(HUBSPOT_ENDPOINT_DEALS,hsAccessToken),
       requestPromise(FORTNOX_ENDPOINT,fnAccessToken),
     ])
       .then((responses) => {
         var jsonHubSpot1 = JSON.stringify(JSON.parse(responses[0]).results);
         var jsonHubSpot2 = JSON.stringify(JSON.parse(responses[1]).results);
-        var jsonHubSpot3 = JSON.stringify(JSON.parse(responses[2]).results);
-        var jsonFortnox = JSON.stringify(JSON.parse(responses[3]));
-        jsonResponse = '[' + jsonHubSpot1+ ',' +jsonHubSpot2+ ',' +jsonHubSpot3+ ',' + jsonFortnox + ']';
+        var jsonFortnox = JSON.stringify(JSON.parse(responses[2]));
+        jsonResponse = '['+ jsonHubSpot1+ ',' +jsonHubSpot2+ ',' + jsonFortnox + ']';
 
         requestOpenAI(jsonResponse, (chunkSize = 1000)).then((response) => {
           openAItext = response;
