@@ -31,6 +31,7 @@ const FORTNOX_STATE = process.env.FORTNOX_STATE;
 const FORTNOX_ACCESS_TYPE = process.env.FORTNOX_ACCESS_TYPE;
 const FORTNOX_RESPONSE_CODE = process.env.FORTNOX_RESPONSE_CODE;
 const FORTNOX_ACCOUNT_TYPE = process.env.FORTNOX_ACCOUNT_TYPE;
+const FORTNOX_ENDPOINT = process.env.FORTNOX_ENDPOINT;
 
 // -----------------------------------PAGES-------------------------------------------
 // Welcome page
@@ -106,18 +107,19 @@ app.get("/generate", function (req, res) {
     fnAuthCode = fnAccessToken = hsAuthCode = hsAccessToken = null;
     res.redirect("/authenticate");
   } else {
+
     Promise.all([
       requestPromise(apiRequest('contacts',hsAccessToken)),
       requestPromise(apiRequest('companies',hsAccessToken)),
       requestPromise(apiRequest('deals',hsAccessToken)),
-      requestPromise(apiRequest('companyinformation',fnAccessToken)),
+      requestPromise(apiRequest(FORTNOX_ENDPOINT,fnAccessToken)),
     ])
       .then((responses) => {
         var jsonHubSpot1 = JSON.stringify(JSON.parse(responses[0]).results);
         var jsonHubSpot2 = JSON.stringify(JSON.parse(responses[1]).results);
         var jsonHubSpot3 = JSON.stringify(JSON.parse(responses[2]).results);
         var jsonFortnox = JSON.stringify(JSON.parse(responses[3]));
-        jsonResponse = jsonHubSpot1+jsonHubSpot2+jsonHubSpot3+jsonFortnox;
+        jsonResponse = '[' + jsonHubSpot1+ ',' +jsonHubSpot2+ ',' +jsonHubSpot3+ ',' + jsonFortnox + ']';
 
         requestOpenAI(jsonResponse, (chunkSize = 1000)).then((response) => {
           openAItext = response;
@@ -174,8 +176,7 @@ app.get("/fn-oauth", (req, res) =>
       `&scope=${FORTNOX_SCOPE}` +
       `&state=${FORTNOX_STATE}` +
       `&access_type=${FORTNOX_ACCESS_TYPE}` +
-      `&response_type=${FORTNOX_RESPONSE_CODE}` +
-      `&account_type=${FORTNOX_ACCOUNT_TYPE}`
+      `&response_type=${FORTNOX_RESPONSE_CODE}`
   )
 );
 
