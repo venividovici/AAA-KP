@@ -23,6 +23,7 @@ const HUBSPOT_CLIENT_SECRET = process.env.HUBSPOT_CLIENT_SECRET;
 const HUBSPOT_REDIRECT_URI = process.env.HUBSPOT_REDIRECT_URI;
 const HUBSPOT_SCOPE = process.env.HUBSPOT_SCOPE;
 const HUBSPOT_ENDPOINT_DEALS = process.env.HUBSPOT_ENDPOINT_DEALS; 
+const HUBSPOT_ENDPOINT_COMPANIES = process.env.HUBSPOT_ENDPOINT_COMPANIES;
 
 const FORTNOX_CLIENT_ID = process.env.FORTNOX_CLIENT_ID;
 const FORTNOX_CREDENTIALS = process.env.FORTNOX_CREDENTIALS;
@@ -83,7 +84,7 @@ function requestPromise(endpoint, token){
   const options = {
     method: "GET",
     url: `${token==hsAccessToken?
-      'https://api.hubspot.com/crm/v3/objects/':
+      'https://api.hubspot.com/crm/v3/':
       'https://api.fortnox.se/3/'}${endpoint}`,
     headers: {
       Authorization: "Bearer " + token,
@@ -105,7 +106,7 @@ app.get("/generate", function (req, res) {
   } else {
 
     Promise.all([
-      requestPromise('companies',hsAccessToken),
+      requestPromise(HUBSPOT_ENDPOINT_COMPANIES,hsAccessToken),
       requestPromise(HUBSPOT_ENDPOINT_DEALS,hsAccessToken),
       requestPromise(FORTNOX_ENDPOINT,fnAccessToken),
     ])
