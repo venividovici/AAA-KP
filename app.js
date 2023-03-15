@@ -78,26 +78,21 @@ app.get("/reloadAIResponse", function (req, res) {
 
 // -----------------------------------API LOGIC-------------------------------------------
 
-function apiRequest(endpoint, token) {
-  return {
+function requestPromise(endpoint, token){
+  const options = {
     method: "GET",
     url: `${token==hsAccessToken?
-      'https://api.hubspot.com/crm/v3/objects/':'https://api.fortnox.se/3/'}${endpoint}`,
+      'https://api.hubspot.com/crm/v3/objects/':
+      'https://api.fortnox.se/3/'}${endpoint}`,
     headers: {
       Authorization: "Bearer " + token,
       "Content-Type": "application/json",
     },
-  };
-}
-
-function requestPromise(options) {
+  }
   return new Promise((resolve, reject) => {
     request(options, (error, response, body) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(body);
-      }
+      if (error) reject(error);
+      else resolve(body);
     });
   });
 }
@@ -109,10 +104,10 @@ app.get("/generate", function (req, res) {
   } else {
 
     Promise.all([
-      requestPromise(apiRequest('contacts',hsAccessToken)),
-      requestPromise(apiRequest('companies',hsAccessToken)),
-      requestPromise(apiRequest('deals',hsAccessToken)),
-      requestPromise(apiRequest(FORTNOX_ENDPOINT,fnAccessToken)),
+      requestPromise('contacts',hsAccessToken),
+      requestPromise('companies',hsAccessToken),
+      requestPromise('deals',hsAccessToken),
+      requestPromise(FORTNOX_ENDPOINT,fnAccessToken),
     ])
       .then((responses) => {
         var jsonHubSpot1 = JSON.stringify(JSON.parse(responses[0]).results);
