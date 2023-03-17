@@ -1,5 +1,4 @@
 const { Configuration, OpenAIApi } = require("openai");
-
 /**
  * 
  * @param {*} jsonData json data to be stringified, split and preprocessed
@@ -73,7 +72,7 @@ async function requestOpenAI(jsonData, chunkSize) {
        Output:`;
     }
 
-    function analysis_prompt(summarizedData){
+    function analysis_prompt(summarizedData) {
       return `Nedan kommer en lista på olika företag som är kunder, bredvid kundnamnen står ett belopp som representerar summan av
       alla fakturor som betalats in från dem.
   
@@ -101,12 +100,7 @@ async function requestOpenAI(jsonData, chunkSize) {
     }
 
     console.log(summarizedData);
-    // if (count == chunkCount - 1) {
     return temp
-    // } else {
-    // return summarizedData
-    // }
-    // count == chunkCount - 1 ? return summarizedData : return temp;
   } catch (error) {
     console.log(error.response);
   }
