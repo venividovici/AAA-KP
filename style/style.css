@@ -93,11 +93,12 @@ p {
 }
 
 textarea {
-  margin: 2%;
+  margin-right: 2%;
   height: 400px;
   width: 70vw;
   font-size: 17px;
   border: none;
+  resize: none;
 }
 
 #besides {
@@ -108,11 +109,11 @@ textarea {
 
 .container {
   width: 100%;
-  float: left;
+  display: inline-block;
 }
 
 .inline {
-  align-items: center;
+  margin: 0%;;
   display: inline-block;
 }
 
@@ -232,8 +233,13 @@ textarea {
   padding: 10px;
   font-size: 30px;
   cursor: pointer;
-  float: right;
-  /* margin-left: 10%; */
+  width: 70px;
+  padding: 10px;
+  font-size: 40px;
+  display: inline-block;
+  align-content: center;
+  margin: 30%;
+  margin-left: 30%;
 }
 
 #reloadButton:hover {
@@ -249,9 +255,9 @@ textarea {
   width: 70px;
   padding: 10px;
   font-size: 40px;
-  margin-left: 20%;
+  display: inline-block;
+  align-content: center;
   cursor: pointer;
-  float: left;
 }
 
 #downloadButton:hover {
