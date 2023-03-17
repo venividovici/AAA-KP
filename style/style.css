@@ -131,7 +131,6 @@ textarea {
   width: 150px;
   height: 150px;
   transition: all 0.5s;
-  /* margin: 50px; */
   float: right;
   cursor: pointer;
 }
