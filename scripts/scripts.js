@@ -27,7 +27,9 @@ function downloadFile(jsonContent) {
 
 function loadingBlur() {
   var blur = document.getElementById("loadingBlur");
+  var text = document.getElementById("loadingText");
   blur.classList.add("loadingBlur");
+  text.innerHTML = "Vänligen vänta, analysen kan ta upp till 5 minuter.";
   var symbol = document.getElementById("loadingSymbol");
   symbol.classList.add("lds-ellipsis");
 }

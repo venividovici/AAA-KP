@@ -20,15 +20,16 @@
     </header>
 
     <main>
-        <p>
-        Välkommen till Automated Analytics Accelerator! <br><br>
-        I denna webapplikation kommer du snart att få autentisera dig på Hubspot och Fortnox. 
-        Efter autentiseringen kommer applikationen samla data från respektive system och ta fram 
-        en JSON fil av denna data. Datan kommer finnas tillgänglig i en JSON fil som du kan ladda ner till 
-        din dator med information kring interaktion med kunder vid olika tidpunkter och hur dessa återspeglas i fakturor. 
-        Denna fil kan du enkelt applicera på Microsoft Power BI för att visa datan i modeller och diagram.  
-        Utöver filen kommer du även att få en AI genererad analys av datan som du kan ladda om, i de 
-        fall du vill ha ytterligare analys. Tryck på knappen för att komma till autentiseringssidan! 
+        <p class="introText">
+        <strong>Här kommer du att:</strong> <br><br>
+            1. Autentisera dig på Hubspot och Fortnox. <br><br>
+            2. Klicka 'Nästa' och få en AI-genererad analys av data hämtad från tjänsterna <br><br>
+            3. Få möjlighet att ladda ner den sammanställda datan  <br><br>
+
+        Datan sammanställs i JSON-format och kan laddas ned för att importeras
+         till visualiseringsverktyg som t.ex Power-BI. <br> 
+         Analysen ger dig konkreta tips och råd för att visualisera datan och
+        information om vilka företag som är de mest lönsamma. 
         </p>
     </main>
         <button onclick="location.href='/authenticate' " type="button" id="next"><span>Nästa</span></button>
