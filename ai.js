@@ -14,6 +14,7 @@ async function requestOpenAI(jsonData, chunkSize) {
 
   var dataString = jsonData;
   var dataChunks = [];
+  var count = 0; 
 
   for (var x = 0; x < dataString.length; x += chunkSize) {
     dataChunks[n++] = dataString.substring(x, x + chunkSize);
@@ -58,7 +59,7 @@ async function requestOpenAI(jsonData, chunkSize) {
      ${summarizedData}
     
      Obearbetad data:
-     ${dataChunks[i]}
+     ${dataChunks[count]}
     
      Resultat från förbearbetning av data:`;
     var analysis_prompt = `
@@ -67,18 +68,22 @@ async function requestOpenAI(jsonData, chunkSize) {
 
      Förslag på insikter som kan vara bra att få med i sin rapport skulle kunna vara till exempel ett
      cirkeldiagram över de bästa kunderna efter intäkter. Ett annat exempel är att identifiera eventuella trender
-      eller mönster i fakturadata, till exempel fluktuationer i intäkter eller en ökning av vissa typer av fakturor.
+     eller mönster i fakturadata, till exempel fluktuationer i intäkter eller en ökning av vissa typer av fakturor.
      
      Vänligen ge detaljerade insikter för var och en av ovanstående frågor, med stöd av
      relevanta data och exempel. Tänk på att de genererade insikterna bör vara det
      korrekt, sammanhängande och värdefullt för konsultföretaget för affärsutveckling
      framtida beslut. Föreslå ingenting som inte framgår i datan, det vill säga, hitta inte på någonting nytt.
 
+     Vänligen ge några exempel på företag och dess fakturor. Företag hittar du efter "CustomerName": och för att hitta vad en faktura tillhör för företag
+     leta efter "name": 
+
      Förbearbetad data: ${summarizedData}
      Tips för skapande av en Business Intelligence-rapport:`;
 
     for (var i = 0; i < chunkCount; i++) {
       console.log(`batch ${i + 1} is being processed...\n`);
+      count++; 
       const completion = await openai.createCompletion({
         model: "text-davinci-003",
         max_tokens: 1500,
