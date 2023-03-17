@@ -126,8 +126,6 @@ app.get("/generate", function (req, res) {
         res.status(500).send("Error");
       });
   }
-          res.redirect("/output");
-
 });
 
 //Fortnox callback (exchange code for token)
