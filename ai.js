@@ -34,11 +34,10 @@ async function requestOpenAI(jsonData, chunkSize) {
       "Total" så följer en siffra, den tillhör det företag nämndes senast, lägg till den siffran efter företagsnamnet i listan.
       Om Samma företag dyker upp igen, lägg inte till det i listan igen men addera ihop summan av båda siffrorna. Om det står "Total" och en summa
       men inget företag nämns inann så tillhör summan det företag som står längst ner i den tidigare listan, lägg då till summan där.
-      summan som följer
       Output är en lista över CustomerName eller name från JSON-data + tidigare lista. 
       Output är alltså sammansatt lista som är längre än tidigare lista. 
   
-      JSON-data:
+      Exempel på JSON-data:
       #18:tps://api.fortnox.se/3/invoices/1692","Balance":0,"Booked":true,"Cancelled":false,"CostCenter":"","Currency":"SEK",
       "CurrencyRate":"1","CurrencyUnit":1,"CustomerName":"MalmbergGruppen Aktiebolag","CustomerNumber":"324","DocumentNumber":"1692",
       "DueDate":"2019-12-31","ExternalInvoiceReference1":"","ExternalInvoiceReference2":"","InvoiceDate":"2019-12-01","InvoiceType":"INVOICE",
@@ -48,12 +47,12 @@ async function requestOpenAI(jsonData, chunkSize) {
       "CustomerNumber":"290","DocumentNumber":"1607","DueDate":"2018-12-01","ExternalInvoiceReference1":"","ExternalInvoiceReference2":"","InvoiceDate":"2018-11-01","InvoiceType":"INVOICE",
       "NoxFinans":false,"OCR":"160762","Vouche
       
-       Tidigare lista:
+       Exempel på Tidigare lista:
        IKEA Ämhult AB 51000
        Volvo AB 20000
        MalmbergGruppen Aktiebolag 258500
 
-       Output: (Dessa är bara exempel för att förstå mönstret, och är inte med i nästa output)
+       Exempel på Output: (Dessa är bara exempel för att förstå mönstret, och är inte med i nästa output)
        IKEA Ämhult AB 51000
        Volvo AB 20000
        MalmbergGruppen Aktiebolag 517000
@@ -107,21 +106,3 @@ async function requestOpenAI(jsonData, chunkSize) {
 }
 
 module.exports = requestOpenAI;
-
-
-// Här kommer en mängd data, datan är del av en större datamängd men på grund av token-gränsen på
-//     GPT-3 så kommer bara en del av datan i taget. Datan avser information om kunder som ett företag har
-//     och information om fakturor. All information kommer ifrån och avser samma företag i Lund.
-//     Datan innehåller 1) information om kunderna (företagen) 2) Information om Deals och 3) Information om fakturor.
-//     Svara med en ny lista. Om det finns något i datan som troligtvis är ett namn på ett företag, lägg till det i den nya listan.
-//     Innan företagsnamnen brukar det står "name" eller "CustomerName", så leta efter det.
-//     Den nya listan ska börja med den tidigare listan, och sen namnen på företagen.
-
-//     Svara med en lista över de relevanta raderna, lägg inte till något om det redan står på listan. Nedan är en tidigare lista som redan har
-//     sammanställts, listan du svarar med ska vara en förlängning av den listan. Det vill säga: Skapa en egen lista och sätt ihop
-//     den längst bak på den tidigare listan och svara sedan med den nya längre listan. Lägg inte till något i listan som inte redan
-//     finns i datan (under "Data att göra den nya listan på:").
-//     Om det inte finns något relevant i datan så är det bäst att inte lägga till någonting alls utan bara svara med den tidigare listan.
-//     Om det står "undefined" under "Tidigare lista:" så är detta den första gången datan summeras till en lista, strunta då i den tidigare listan och
-//     svara endast med den nya listan. Listan kommer alltså bara vara namn på företag, först de som finns (om några) i den tidigare listan
-//     och sen de som hittats (om några) ifrån datan.
