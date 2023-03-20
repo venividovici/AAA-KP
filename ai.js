@@ -17,14 +17,12 @@ async function requestOpenAI(jsonData, chunkSize) {
 
   for (var x = 0; x < dataString.length; x += chunkSize) {
     dataChunks[n++] = dataString.substring(x, x + chunkSize);
-    console.log(`\n\n#${n}:${dataChunks[n - 1]}`);
   }
 
   const openai = new OpenAIApi(configuration);
   try {
     var summarizedData = "";
     var temp = '';
-    console.log("\n\n\n");
 
     var chunkCount = dataChunks.length;
 
