@@ -1,5 +1,15 @@
 function onClickToOutput() {
-  loadingBlur();
+  /* loadingBlur(); */
+
+  var blur = document.getElementById("loadingBlur");
+  var button = document.getElementById("next");
+  var loading = document.getElementById("wrapper");
+  blur.classList.add("loadingBlur");
+  button.classList.add("loadingBlur");
+  loading.classList.add("wrapper");
+
+  animateCircle(50);
+
   document.getElementById("next").disabled = true;
   location.href = "/generate";
 }
@@ -25,11 +35,11 @@ function downloadFile(jsonContent) {
   fileLink.click();
 }
 
-function loadingBlur() {
+/* function loadingBlur() {
   var blur = document.getElementById("loadingBlur");
   var text = document.getElementById("loadingText");
   blur.classList.add("loadingBlur");
   text.innerHTML = "Vänligen vänta, analysen kan ta upp till 5 minuter.";
   var symbol = document.getElementById("loadingSymbol");
   symbol.classList.add("lds-ellipsis");
-}
+} */
