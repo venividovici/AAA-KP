@@ -101,7 +101,7 @@ async function requestOpenAI(jsonData, chunkSize) {
     console.log(summarizedData);
     return temp
   } catch (error) {
-    console.log(error.response);
+    return error.message
   }
 }
 
