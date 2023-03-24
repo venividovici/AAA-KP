@@ -22,7 +22,7 @@ const HUBSPOT_CLIENT_ID = process.env.HUBSPOT_CLIENT_ID;
 const HUBSPOT_CLIENT_SECRET = process.env.HUBSPOT_CLIENT_SECRET;
 const HUBSPOT_REDIRECT_URI = process.env.HUBSPOT_REDIRECT_URI;
 const HUBSPOT_SCOPE = process.env.HUBSPOT_SCOPE;
-const HUBSPOT_ENDPOINT_DEALS = process.env.HUBSPOT_ENDPOINT_DEALS; 
+const HUBSPOT_ENDPOINT_DEALS = process.env.HUBSPOT_ENDPOINT_DEALS;
 const HUBSPOT_ENDPOINT_COMPANIES = process.env.HUBSPOT_ENDPOINT_COMPANIES;
 
 const FORTNOX_CLIENT_ID = process.env.FORTNOX_CLIENT_ID;
@@ -49,7 +49,7 @@ app.get("/authenticate", (req, res) =>
 
 // Output page
 app.get("/output", function (req, res) {
-  if (openAItext == "") res.redirect("/authenticate");
+  if(false) {}/* if (openAItext == "") res.redirect("/authenticate"); */
   else
     res.render("pages/output", {
       dataInfo: openAItext,
@@ -80,17 +80,19 @@ app.get("/reloadAIResponse", function (req, res) {
 
 // -----------------------------------API LOGIC-------------------------------------------
 
-function requestPromise(endpoint, token){
+function requestPromise(endpoint, token) {
   const options = {
     method: "GET",
-    url: `${token==hsAccessToken?
-      'https://api.hubspot.com/crm/v3/':
-      'https://api.fortnox.se/3/'}${endpoint}`,
+    url: `${
+      token == hsAccessToken
+        ? "https://api.hubspot.com/crm/v3/"
+        : "https://api.fortnox.se/3/"
+    }${endpoint}`,
     headers: {
       Authorization: "Bearer " + token,
       "Content-Type": "application/json",
     },
-  }
+  };
   return new Promise((resolve, reject) => {
     request(options, (error, response, body) => {
       if (error) reject(error);
@@ -104,22 +106,24 @@ app.get("/generate", function (req, res) {
     fnAuthCode = fnAccessToken = hsAuthCode = hsAccessToken = null;
     res.redirect("/authenticate");
   } else {
-
     Promise.all([
-      requestPromise(HUBSPOT_ENDPOINT_COMPANIES,hsAccessToken),
-      requestPromise(HUBSPOT_ENDPOINT_DEALS,hsAccessToken),
-      requestPromise(FORTNOX_ENDPOINT,fnAccessToken),
+      requestPromise(HUBSPOT_ENDPOINT_COMPANIES, hsAccessToken),
+      requestPromise(HUBSPOT_ENDPOINT_DEALS, hsAccessToken),
+      requestPromise(FORTNOX_ENDPOINT, fnAccessToken),
     ])
       .then((responses) => {
         var jsonHubSpot1 = JSON.stringify(JSON.parse(responses[0]).results);
         var jsonHubSpot2 = JSON.stringify(JSON.parse(responses[1]).results);
         var jsonFortnox = JSON.stringify(JSON.parse(responses[2]));
-        jsonResponse = '['+ jsonHubSpot1+ ',' +jsonHubSpot2+ ',' + jsonFortnox + ']';
+        jsonResponse =
+          "[" + jsonHubSpot1 + "," + jsonHubSpot2 + "," + jsonFortnox + "]";
 
-        requestOpenAI(jsonResponse, (chunkSize = 1000)).then((response) => {
+/*         requestOpenAI(jsonResponse, (chunkSize = 1000)).then((response) => {
           openAItext = response;
           res.redirect("/output");
-        });
+        }); */
+
+        res.redirect("/output");
       })
       .catch((error) => {
         console.error(error);
