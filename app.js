@@ -49,12 +49,12 @@ app.get("/authenticate", (req, res) =>
 
 // Output page
 app.get("/output", function (req, res) {
-  if(false) {}/* if (openAItext == "") res.redirect("/authenticate"); */
-  else
-    res.render("pages/output", {
-      dataInfo: openAItext,
-      responses: JSON.stringify(jsonResponse),
-    });
+  openAItext =
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi non justo leo. Quisque malesuada sapien sed justo varius ultrices. Aenean maximus eros sed molestie hendrerit. Pellentesque id rutrum justo. Ut luctus urna nec mi lacinia, sed fringilla orci ultrices. Phasellus sit amet est mauris. Aenean lacinia, arcu in aliquam porta, massa mi ultricies nulla, et consequat odio est ut lacus. In molestie mattis enim et convallis. Mauris facilisis nibh id diam hendrerit, sit amet bibendum turpis molestie. Integer interdum metus orci, vitae ullamcorper neque sagittis id. Maecenas eu commodo neque. Maecenas rutrum, dolor luctus mollis tempor, nisl sem vulputate ligula, nec hendrerit libero nisi vel felis. Maecenas pellentesque ex et eros tincidunt, a scelerisque nisl elementum. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In at velit id est imperdiet pharetra. Fusce vitae nunc vitae magna iaculis mattis nec at enim.\n\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi non justo leo. Quisque malesuada sapien sed justo varius ultrices. Aenean maximus eros sed molestie hendrerit. Pellentesque id rutrum justo. Ut luctus urna nec mi lacinia, sed fringilla orci ultrices. Phasellus sit amet est mauris. Aenean lacinia, arcu in aliquam porta, massa mi ultricies nulla, et consequat odio est ut lacus. In molestie mattis enim et convallis. Mauris facilisis nibh id diam hendrerit, sit amet bibendum turpis molestie. Integer interdum metus orci, vitae ullamcorper neque sagittis id. Maecenas eu commodo neque. Maecenas rutrum, dolor luctus mollis tempor, nisl sem vulputate ligula, nec hendrerit libero nisi vel felis. Maecenas pellentesque ex et eros tincidunt, a scelerisque nisl elementum. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In at velit id est imperdiet pharetra. Fusce vitae nunc vitae magna iaculis mattis nec at enim.\n\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi non justo leo. Quisque malesuada sapien sed justo varius ultrices. Aenean maximus eros sed molestie hendrerit. Pellentesque id rutrum justo. Ut luctus urna nec mi lacinia, sed fringilla orci ultrices. Phasellus sit amet est mauris. Aenean lacinia, arcu in aliquam porta, massa mi ultricies nulla, et consequat odio est ut lacus. In molestie mattis enim et convallis. Mauris facilisis nibh id diam hendrerit, sit amet bibendum turpis molestie. Integer interdum metus orci, vitae ullamcorper neque sagittis id. Maecenas eu commodo neque. Maecenas rutrum, dolor luctus mollis tempor, nisl sem vulputate ligula, nec hendrerit libero nisi vel felis. Maecenas pellentesque ex et eros tincidunt, a scelerisque nisl elementum. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In at velit id est imperdiet pharetra. Fusce vitae nunc vitae magna iaculis mattis nec at enim.";
+  res.render("pages/output", {
+    dataInfo: openAItext,
+    responses: JSON.stringify(jsonResponse),
+  });
 });
 
 // Output page: Reload AI response
@@ -118,7 +118,7 @@ app.get("/generate", function (req, res) {
         jsonResponse =
           "[" + jsonHubSpot1 + "," + jsonHubSpot2 + "," + jsonFortnox + "]";
 
-/*         requestOpenAI(jsonResponse, (chunkSize = 1000)).then((response) => {
+        /*         requestOpenAI(jsonResponse, (chunkSize = 1000)).then((response) => {
           openAItext = response;
           res.redirect("/output");
         }); */
